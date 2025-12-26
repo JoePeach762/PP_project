@@ -3,9 +3,9 @@ package bootstrap
 import (
 	"fmt"
 
-	"github.com/Domenick1991/students/config"
-	studentsinfoupsertconsumer "github.com/Domenick1991/students/internal/consumer/students_Info_upsert_consumer"
-	studentsinfoprocessor "github.com/Domenick1991/students/internal/services/processors/students_info_processor"
+	"github.com/JoePeach762/PP_project/config"
+	studentsinfoupsertconsumer "github.com/JoePeach762/PP_project/internal/consumer/students_Info_upsert_consumer"
+	studentsinfoprocessor "github.com/JoePeach762/PP_project/internal/services/processors/students_info_processor"
 )
 
 func InitStudentInfoUpsertConsumer(cfg *config.Config, studentsInfoProcessor *studentsinfoprocessor.StudentsInfoProcessor) *studentsinfoupsertconsumer.StudentInfoUpsertConsumer {

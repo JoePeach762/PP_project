@@ -11,8 +11,8 @@
             "mode": "debug",
             "program": "${workspaceFolder}/cmd/app/main.go",
             "env": {
-                "swaggerPath" : "/Users/evgeniy_stoyanov/students/pet/internal/pb/swagger/students_api/students.swagger.json",
-                "configPath" : "/Users/evgeniy_stoyanov/students/pet/config.yaml"
+                "swaggerPath" : "internal/pb/swagger/students_api/students.swagger.json",
+                "configPath" : "config.yaml"
             },
         }
     ]

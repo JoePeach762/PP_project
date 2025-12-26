@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/Domenick1991/students/config"
-	"github.com/Domenick1991/students/internal/storage/pgstorage"
+	"github.com/JoePeach762/PP_project/config"
+	"github.com/JoePeach762/PP_project/internal/storage/pgstorage"
 )
 
 func InitPGStorage(cfg *config.Config) *pgstorage.PGstorage {

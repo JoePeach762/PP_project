@@ -3,7 +3,7 @@ package studentsinfoprocessor
 import (
 	"context"
 
-	"github.com/Domenick1991/students/internal/models"
+	"github.com/JoePeach762/PP_project/internal/models"
 )
 
 func (p *StudentsInfoProcessor) Handle(ctx context.Context, studentsInfo *models.StudentInfo) error {

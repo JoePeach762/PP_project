@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"os"
 
-	server "github.com/Domenick1991/students/internal/api/student_service_api"
-	studentsinfoupsertconsumer "github.com/Domenick1991/students/internal/consumer/students_Info_upsert_consumer"
+	server "github.com/JoePeach762/PP_project/internal/api/student_service_api"
+	studentsinfoupsertconsumer "github.com/JoePeach762/PP_project/internal/consumer/students_Info_upsert_consumer"
 
-	"github.com/Domenick1991/students/internal/pb/students_api"
+	"github.com/JoePeach762/PP_project/internal/pb/students_api"
 	"github.com/go-chi/chi/v5"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -51,8 +51,12 @@ func runGatewayServer() error {
 	defer cancel()
 
 	swaggerPath := os.Getenv("swaggerPath")
-	if _, err := os.Stat(swaggerPath); os.IsNotExist(err) {
-		panic(fmt.Errorf("swagger file not found: %s", swaggerPath))
+	if swaggerPath == "" {
+		swaggerPath = "internal/pb/swagger/students_api/students.swagger.json"
+	}
+
+	if _, err := os.Stat(swaggerPath); err != nil {
+		return fmt.Errorf("swagger file not found: %s", swaggerPath)
 	}
 
 	r := chi.NewRouter()

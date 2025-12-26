@@ -1,50 +1,62 @@
 package pgstorage
 
 import (
-	"context"
-	"fmt"
-
 	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/pkg/errors"
 )
 
-type PGstorage struct {
-	db *pgxpool.Pool
+// PgStorage — фабрика для получения интерфейсов хранилищ
+type PgStorage interface {
+	User() UserStorage
+	UserPreferences() UserPreferencesStorage
+	Product() ProductStorage
+	MealLog() MealLogStorage
+	DailySummary() DailySummaryStorage
+	MealTemplate() MealTemplateStorage
+	MealPlan() MealPlanStorage
+	MealPlanDay() MealPlanDayStorage
+	MealPlanEntry() MealPlanEntryStorage
 }
 
-func NewPGStorge(connString string) (*PGstorage, error) {
-
-	config, err := pgxpool.ParseConfig(connString)
-	if err != nil {
-		return nil, errors.Wrap(err, "ошибка парсинга конфига")
-	}
-
-	db, err := pgxpool.NewWithConfig(context.Background(), config)
-	if err != nil {
-		return nil, errors.Wrap(err, "ошибка подключения")
-	}
-	storage := &PGstorage{
-		db: db,
-	}
-	err = storage.initTables()
-	if err != nil {
-		return nil, err
-	}
-
-	return storage, nil
+type pgStorage struct {
+	pool *pgxpool.Pool
 }
 
-func (s *PGstorage) initTables() error {
-	sql := fmt.Sprintf(`
-    CREATE TABLE IF NOT EXISTS %v (
-        %v SERIAL PRIMARY KEY,
-        %v VARCHAR(100) NOT NULL,
-        %v VARCHAR(255) UNIQUE NOT NULL,
-        %v INT
-    )`, tableName, IDСolumnName, NameСolumnName, EmailСolumnName, AgeСolumnName)
-	_, err := s.db.Exec(context.Background(), sql)
-	if err != nil {
-		return errors.Wrap(err, "initition tables")
-	}
-	return nil
+func NewPgStorage(pool *pgxpool.Pool) PgStorage {
+	return &pgStorage{pool: pool}
+}
+
+func (s *pgStorage) User() UserStorage {
+	return &userStorage{pool: s.pool}
+}
+
+func (s *pgStorage) UserPreferences() UserPreferencesStorage {
+	return &userPreferencesStorage{pool: s.pool}
+}
+
+func (s *pgStorage) Product() ProductStorage {
+	return &productStorage{pool: s.pool}
+}
+
+func (s *pgStorage) MealLog() MealLogStorage {
+	return &mealLogStorage{pool: s.pool}
+}
+
+func (s *pgStorage) DailySummary() DailySummaryStorage {
+	return &dailySummaryStorage{pool: s.pool}
+}
+
+func (s *pgStorage) MealTemplate() MealTemplateStorage {
+	return &mealTemplateStorage{pool: s.pool}
+}
+
+func (s *pgStorage) MealPlan() MealPlanStorage {
+	return &mealPlanStorage{pool: s.pool}
+}
+
+func (s *pgStorage) MealPlanDay() MealPlanDayStorage {
+	return &mealPlanDayStorage{pool: s.pool}
+}
+
+func (s *pgStorage) MealPlanEntry() MealPlanEntryStorage {
+	return &mealPlanEntryStorage{pool: s.pool}
 }

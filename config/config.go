@@ -10,7 +10,9 @@ import (
 type Config struct {
 	Database               DatabaseConfig         `yaml:"database"`
 	Kafka                  KafkaConfig            `yaml:"kafka"`
+	Redis                  RedisConfig            `yaml:"redis"`
 	StudentServiceSettings StudentServiceSettings `yaml:"StudentServiceSettings"`
+	MealServiceSettings    MealServiceSettings    `yaml:"MealServiceSettings"`
 }
 
 type DatabaseConfig struct {
@@ -27,6 +29,18 @@ type KafkaConfig struct {
 	Port                       int    `yaml:"port"`
 	StudentInfoUpsertTopicName string `yaml:"student_info_upsert_topic_name"`
 	StudentInfoEventTopicName  string `yaml:"student_info_event_topic_name"`
+}
+
+type RedisConfig struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	Password string `yaml:"password"`
+	DBStr    string `yaml:"dbStr"`
+}
+
+type MealServiceSettings struct {
+	MinNameLen int `yaml:"minNameLen"`
+	MaxNameLen int `yaml:"maxNameLen"`
 }
 
 type StudentServiceSettings struct {

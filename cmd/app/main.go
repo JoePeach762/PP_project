@@ -4,13 +4,18 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Domenick1991/students/config"
-	"github.com/Domenick1991/students/internal/bootstrap"
+	"github.com/JoePeach762/PP_project/config"
+	"github.com/JoePeach762/PP_project/internal/bootstrap"
 )
 
 func main() {
 
-	cfg, err := config.LoadConfig(os.Getenv("configPath"))
+	configPath := os.Getenv("configPath")
+	if configPath == "" {
+		configPath = "config.yaml"
+	}
+
+	cfg, err := config.LoadConfig(configPath)
 	if err != nil {
 		panic(fmt.Sprintf("ошибка парсинга конфига, %v", err))
 	}

@@ -1,6 +1,6 @@
 syntax = "proto3";
 package students.service.v1;
-option go_package = "github.com/Domenick1991/students/internal/pb/students_api";
+option go_package = "github.com/JoePeach762/PP_project/internal/pb/students_api";
 import "models/student_model.proto";
 import "google/api/annotations.proto";
 

@@ -3,8 +3,8 @@ package student_service_api
 import (
 	"context"
 
-	"github.com/Domenick1991/students/internal/models"
-	"github.com/Domenick1991/students/internal/pb/students_api"
+	"github.com/JoePeach762/PP_project/internal/models"
+	"github.com/JoePeach762/PP_project/internal/pb/students_api"
 )
 
 type studentService interface {

@@ -4,11 +4,11 @@ generate-api:
 
 .PHONY: up
 up:
-	podman-compose up -d
+	docker-compose up -d
 
 .PHONY: down
 down:
-	podman-compose down
+	docker-compose down
 
 .PHONY: cov
 cov:
