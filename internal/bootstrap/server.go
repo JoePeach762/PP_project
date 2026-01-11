@@ -8,10 +8,10 @@ import (
 	"net/http"
 	"os"
 
-	server "github.com/Domenick1991/students/internal/api/student_service_api"
-	studentsinfoupsertconsumer "github.com/Domenick1991/students/internal/consumer/students_Info_upsert_consumer"
+	server "github.com/JoePeach762/PP_project/internal/api/student_service_api"
+	studentsinfoupsertconsumer "github.com/JoePeach762/PP_project/internal/consumer/students_Info_upsert_consumer"
 
-	"github.com/Domenick1991/students/internal/pb/students_api"
+	"github.com/JoePeach762/PP_project/internal/pb/students_api"
 	"github.com/go-chi/chi/v5"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	httpSwagger "github.com/swaggo/http-swagger"

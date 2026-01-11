@@ -1,8 +1,8 @@
 package bootstrap
 
 import (
-	studentsinfoprocessor "github.com/Domenick1991/students/internal/services/processors/students_info_processor"
-	"github.com/Domenick1991/students/internal/services/studentsService"
+	studentsinfoprocessor "github.com/JoePeach762/PP_project/internal/services/processors/students_info_processor"
+	"github.com/JoePeach762/PP_project/internal/services/studentsService"
 )
 
 func InitStudentsInfoProcessor(studentService *studentsService.StudentService) *studentsinfoprocessor.StudentsInfoProcessor {

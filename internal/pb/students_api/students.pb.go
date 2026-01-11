@@ -7,13 +7,14 @@
 package students_api
 
 import (
-	models "github.com/Domenick1991/students/internal/pb/models"
-	_ "google.golang.org/genproto/googleapis/api/annotations"
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	models "github.com/JoePeach762/PP_project/internal/pb/models"
+	_ "google.golang.org/genproto/googleapis/api/annotations"
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -205,7 +206,7 @@ const file_students_api_students_proto_rawDesc = "" +
 	"\x1cGetStudentInfoUpsertResponce2\xcc\x02\n" +
 	"\x0fStudentsService\x12\x9c\x01\n" +
 	"\x13GetStudentInfoByIDs\x12/.students.service.v1.GetStudentInfoByIDsRequest\x1a0.students.service.v1.GetStudentInfoByIDsResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/studentInfo/get-by-ids\x12\x99\x01\n" +
-	"\x12UpsertStudentInfos\x120.students.service.v1.GetStudentInfoUpsertRequest\x1a1.students.service.v1.GetStudentInfoUpsertResponce\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/studentInfo/upsertB;Z9github.com/Domenick1991/students/internal/pb/students_apib\x06proto3"
+	"\x12UpsertStudentInfos\x120.students.service.v1.GetStudentInfoUpsertRequest\x1a1.students.service.v1.GetStudentInfoUpsertResponce\"\x1e\x82\xd3\xe4\x93\x02\x18:\x01*\"\x13/studentInfo/upsertB;Z9github.com/JoePeach762/PP_project/internal/pb/students_apib\x06proto3"
 
 var (
 	file_students_api_students_proto_rawDescOnce sync.Once

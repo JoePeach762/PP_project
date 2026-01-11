@@ -6,7 +6,7 @@ import (
 	"net/mail"
 	"strings"
 
-	"github.com/Domenick1991/students/internal/models"
+	"github.com/JoePeach762/PP_project/internal/models"
 )
 
 func (s *StudentService) validateInfo(studentsInfos []*models.StudentInfo) error {

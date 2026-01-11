@@ -1,7 +1,7 @@
 syntax = "proto3";
 
 package  students.models.v1;
-option go_package = "github.com/Domenick1991/students/internal/pb/models";
+option go_package = "github.com/JoePeach762/PP_project/internal/pb/models";
 
 message StudentsInfoModel {
     uint64 id     = 1; 

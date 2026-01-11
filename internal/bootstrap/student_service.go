@@ -3,9 +3,9 @@ package bootstrap
 import (
 	"context"
 
-	"github.com/Domenick1991/students/config"
-	"github.com/Domenick1991/students/internal/services/studentsService"
-	"github.com/Domenick1991/students/internal/storage/pgstorage"
+	"github.com/JoePeach762/PP_project/config"
+	"github.com/JoePeach762/PP_project/internal/services/studentsService"
+	"github.com/JoePeach762/PP_project/internal/storage/pgstorage"
 )
 
 func InitStudentService(storage *pgstorage.PGstorage, cfg *config.Config) *studentsService.StudentService {

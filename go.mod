@@ -1,4 +1,4 @@
-module github.com/Domenick1991/students
+module github.com/JoePeach762/PP_project
 
 go 1.25.0
 

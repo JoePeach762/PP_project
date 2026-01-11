@@ -7,11 +7,12 @@
 package models
 
 import (
-	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
-	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
+
+	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
+	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 )
 
 const (
@@ -162,7 +163,7 @@ const file_models_student_model_proto_rawDesc = "" +
 	"\x13StudentsUpsertModel\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x14\n" +
 	"\x05email\x18\x02 \x01(\tR\x05email\x12\x10\n" +
-	"\x03age\x18\x03 \x01(\x04R\x03ageB5Z3github.com/Domenick1991/students/internal/pb/modelsb\x06proto3"
+	"\x03age\x18\x03 \x01(\x04R\x03ageB5Z3github.com/JoePeach762/PP_project/internal/pb/modelsb\x06proto3"
 
 var (
 	file_models_student_model_proto_rawDescOnce sync.Once

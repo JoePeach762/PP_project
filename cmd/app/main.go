@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/Domenick1991/students/config"
-	"github.com/Domenick1991/students/internal/bootstrap"
+	"github.com/JoePeach762/PP_project/config"
+	"github.com/JoePeach762/PP_project/internal/bootstrap"
 )
 
 func main() {

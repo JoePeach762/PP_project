@@ -5,8 +5,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/Domenick1991/students/internal/models"
-	"github.com/Domenick1991/students/internal/services/studentsService/mocks"
+	"github.com/JoePeach762/PP_project/internal/models"
+	"github.com/JoePeach762/PP_project/internal/services/studentsService/mocks"
 	"github.com/stretchr/testify/suite"
 	"gotest.tools/v3/assert"
 )

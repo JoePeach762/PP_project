@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/Domenick1991/students/internal/models"
+	"github.com/JoePeach762/PP_project/internal/models"
 	"github.com/segmentio/kafka-go"
 )
 
