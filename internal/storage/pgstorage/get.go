@@ -45,6 +45,8 @@ func (storage *PGstorage) GetUsersByIds(ctx context.Context, ids []uint64) ([]*m
 	if err != nil {
 		return nil, errors.Wrap(err, "quering !users! error")
 	}
+	defer rows.Close()
+
 	var users []*models.UserInfo
 	for rows.Next() {
 		var u models.UserInfo

@@ -10,7 +10,7 @@ type storage interface {
 	AddUsers(ctx context.Context, infos []*models.UserInfo) error
 	GetUsersByIds(ctx context.Context, ids []uint64) ([]*models.UserInfo, error)
 	UpdateUser(ctx context.Context, id uint64, info models.UserInfo) error
-	DeleteUsers(ctx context.Context, ids []uint64) error
+	// DeleteUsers(ctx context.Context, ids []uint64) error
 }
 
 type service struct {

@@ -41,10 +41,48 @@ func (s *PGstorage) initTables() error {
         %v VARCHAR(100) NOT NULL,
         %v VARCHAR(255) UNIQUE NOT NULL,
         %v INT
-    )`, studentTableName, studentIDColumnName, studentNameColumnName, studentEmailColumnName, studentAgeColumnName)
+    )`, studentTableName,
+		studentIDColumnName,
+		studentNameColumnName,
+		studentEmailColumnName,
+		studentAgeColumnName,
+	)
 	_, err := s.db.Exec(context.Background(), sql)
 	if err != nil {
-		return errors.Wrap(err, "initition tables")
+		return errors.Wrap(err, "init students tables")
 	}
+
+	userSQL := fmt.Sprintf(`
+		CREATE TABLE IF NOT EXISTS %s (
+			%s SERIAL PRIMARY KEY,
+			%s VARCHAR(100) NOT NULL,
+			%s VARCHAR(255) UNIQUE NOT NULL,
+			%s VARCHAR(10) NOT NULL CHECK (%s IN ('male', 'female')),
+			%s SMALLINT NOT NULL CHECK (%s > 0 AND %s < 100),
+			%s SMALLINT NOT NULL CHECK (%s > 0),
+			%s SMALLINT NOT NULL CHECK (%s > 0),
+			%s SMALLINT DEFAULT 0 CHECK (%s >= 0),
+			%s SMALLINT DEFAULT 0 CHECK (%s >= 0),
+			%s SMALLINT DEFAULT 0 CHECK (%s >= 0),
+			%s SMALLINT DEFAULT 0 CHECK (%s >= 0)
+		)`, userTableName,
+		userIDColumnName,
+		userNameColumnName,
+		userEmailColumnName,
+		userSexColumnName, userSexColumnName,
+		userAgeColumnName, userAgeColumnName, userAgeColumnName,
+		userWeightKgColumnName, userWeightKgColumnName,
+		userTargetWeightKgColumnName, userTargetWeightKgColumnName,
+		userCurrentCaloriesColumnName, userCurrentCaloriesColumnName,
+		userCurrentProteinsColumnName, userCurrentProteinsColumnName,
+		userCurrentFatsColumnName, userCurrentFatsColumnName,
+		userCurrentCarbsColumnName, userCurrentCarbsColumnName,
+	)
+
+	_, err = s.db.Exec(context.Background(), userSQL)
+	if err != nil {
+		return errors.Wrap(err, "init users table")
+	}
+
 	return nil
 }
