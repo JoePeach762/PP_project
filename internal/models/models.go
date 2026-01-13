@@ -15,10 +15,10 @@ type UserInfo struct {
 	ID              uint64
 	Name            string //John
 	Email           string //John@gmail.com
+	Sex             string //Male
+	Age             uint8  //24
 	WeightKg        uint8  //80
 	TargetWeightKg  uint8  //95
-	Age             uint8  //24
-	Sex             string //Male
 	CurrentCalories uint16
 	CurrentProteins uint16
 	CurrentFats     uint16

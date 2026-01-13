@@ -12,7 +12,7 @@ type PGstorage struct {
 	db *pgxpool.Pool
 }
 
-func NewPGStorge(connString string) (*PGstorage, error) {
+func NewPGStorage(connString string) (*PGstorage, error) {
 
 	config, err := pgxpool.ParseConfig(connString)
 	if err != nil {
@@ -41,7 +41,7 @@ func (s *PGstorage) initTables() error {
         %v VARCHAR(100) NOT NULL,
         %v VARCHAR(255) UNIQUE NOT NULL,
         %v INT
-    )`, tableName, IDСolumnName, NameСolumnName, EmailСolumnName, AgeСolumnName)
+    )`, studentTableName, studentIDColumnName, studentNameColumnName, studentEmailColumnName, studentAgeColumnName)
 	_, err := s.db.Exec(context.Background(), sql)
 	if err != nil {
 		return errors.Wrap(err, "initition tables")

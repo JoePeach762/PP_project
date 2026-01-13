@@ -30,7 +30,61 @@ func (storage *PGstorage) GetStudentInfoByIDs(ctx context.Context, IDs []uint64)
 }
 
 func (storage *PGstorage) getQuery(IDs []uint64) squirrel.Sqlizer {
-	q := squirrel.Select(IDСolumnName, NameСolumnName, EmailСolumnName, AgeСolumnName).From(tableName).
-		Where(squirrel.Eq{IDСolumnName: IDs}).PlaceholderFormat(squirrel.Dollar)
+	q := squirrel.Select(studentIDColumnName, studentNameColumnName, studentEmailColumnName, studentAgeColumnName).From(studentTableName).
+		Where(squirrel.Eq{studentIDColumnName: IDs}).PlaceholderFormat(squirrel.Dollar)
+	return q
+}
+
+func (storage *PGstorage) GetUsersByIds(ctx context.Context, ids []uint64) ([]*models.UserInfo, error) {
+	query := storage.getUsersQuery(ids)
+	queryText, args, err := query.ToSql()
+	if err != nil {
+		return nil, errors.Wrap(err, "generate !users! query error")
+	}
+	rows, err := storage.db.Query(ctx, queryText, args...)
+	if err != nil {
+		return nil, errors.Wrap(err, "quering !users! error")
+	}
+	var users []*models.UserInfo
+	for rows.Next() {
+		var u models.UserInfo
+		if err := rows.Scan(
+			&u.ID,
+			&u.Name,
+			&u.Email,
+			&u.Sex,
+			&u.Age,
+			&u.WeightKg,
+			&u.TargetWeightKg,
+			&u.CurrentCalories,
+			&u.CurrentProteins,
+			&u.CurrentFats,
+			&u.CurrentCarbs,
+		); err != nil {
+			return nil, errors.Wrap(err, "failed to scan !users! row")
+		}
+		users = append(users, &u)
+	}
+	return users, nil
+}
+
+func (storage *PGstorage) getUsersQuery(IDs []uint64) squirrel.Sqlizer {
+	q := squirrel.
+		Select(
+			userIDColumnName,
+			userNameColumnName,
+			userEmailColumnName,
+			userSexColumnName,
+			userAgeColumnName,
+			userWeightKgColumnName,
+			userTargetWeightKgColumnName,
+			userCurrentCaloriesColumnName,
+			userCurrentProteinsColumnName,
+			userCurrentFatsColumnName,
+			userCurrentCarbsColumnName,
+		).
+		From(userTableName).
+		Where(squirrel.Eq{userIDColumnName: IDs}).
+		PlaceholderFormat(squirrel.Dollar)
 	return q
 }
