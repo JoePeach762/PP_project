@@ -1,7 +1,11 @@
 package meal
 
-import "context"
+import (
+	"context"
 
-func (s *service) Publish(ctx context.Context) error {
-	return s.producer.Publish()
+	"github.com/JoePeach762/PP_project/internal/models"
+)
+
+func (s *service) Publish(ctx context.Context, info *models.MealInfo) error {
+	return s.producer.PublishMealConsumed(ctx, info)
 }
