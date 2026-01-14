@@ -7,7 +7,7 @@ import (
 )
 
 type producer interface {
-	Publish()
+	Publish() error
 }
 
 type storage interface {
