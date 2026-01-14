@@ -14,28 +14,33 @@ type UserInfo struct {
 	Name            string `db:"name"`
 	Email           string `db:"email"`
 	Sex             string `db:"sex"`
-	Age             uint8  `db:"age"`
-	WeightKg        uint8  `db:"weightKg"`
-	TargetWeightKg  uint8  `db:"targetWeightKg"`
-	CurrentCalories uint16 `db:"currentCalories"`
-	CurrentProteins uint16 `db:"currentProteins"`
-	CurrentFats     uint16 `db:"currentFats"`
-	CurrentCarbs    uint16 `db:"currentCarbs"`
+	Age             uint32 `db:"age"`
+	HeightCm        uint32 `db:"height_cm"`
+	WeightKg        uint32 `db:"weight_kg"`
+	TargetWeightKg  uint32 `db:"target_weight_kg"`
+	CurrentCalories uint32 `db:"current_calories"`
+	CurrentProteins uint32 `db:"current_proteins"`
+	CurrentFats     uint32 `db:"current_fats"`
+	CurrentCarbs    uint32 `db:"current_carbs"`
+	TargetCalories  uint32 `db:"target_calories"`
+	TargetProteins  uint32 `db:"target_proteins"`
+	TargetFats      uint32 `db:"target_fats"`
+	TargetCarbs     uint32 `db:"target_carbs"`
 }
 
 type MealInfo struct {
 	ID           uint64    `db:"id"`
 	Name         string    `db:"name"`
-	WeightGramms float32   `db:"weightGramms"`
-	Calories100g float32   `db:"calories100g"`
-	Proteins100g float32   `db:"proteins100g"`
-	Fats100g     float32   `db:"fats100g"`
-	Carbs100g    float32   `db:"carbs100g"`
+	WeightGramms float32   `db:"weight_grams"`
+	Calories100g float32   `db:"calories_100g"`
+	Proteins100g float32   `db:"proteins_100g"`
+	Fats100g     float32   `db:"fats_100g"`
+	Carbs100g    float32   `db:"carbs_100g"`
 	Date         time.Time `db:"date"`
 }
 
 const (
-	studentTableName = "studentsInfo"
+	studentTableName = "students_info"
 
 	studentIDColumnName    = "id"
 	studentNameColumnName  = "name"
@@ -44,30 +49,22 @@ const (
 )
 
 const (
-	userTableName = "usersInfo"
+	userTableName = "users_info"
 
 	userIDColumnName              = "id"
 	userNameColumnName            = "name"
 	userEmailColumnName           = "email"
 	userSexColumnName             = "sex"
 	userAgeColumnName             = "age"
-	userWeightKgColumnName        = "weightKg"
-	userTargetWeightKgColumnName  = "targetWeightKg"
-	userCurrentCaloriesColumnName = "currentCalories"
-	userCurrentProteinsColumnName = "currentProteins"
-	userCurrentFatsColumnName     = "currentFats"
-	userCurrentCarbsColumnName    = "currentCarbs"
+	userHeightCmColumnName        = "height_cm"
+	userWeightKgColumnName        = "weight_kg"
+	userTargetWeightKgColumnName  = "target_weight_kg"
+	userCurrentCaloriesColumnName = "current_calories"
+	userCurrentProteinsColumnName = "current_proteins"
+	userCurrentFatsColumnName     = "current_fats"
+	userCurrentCarbsColumnName    = "current_carbs"
+	userTargetCaloriesColumnName  = "target_calories"
+	userTargetProteinsColumnName  = "target_proteins"
+	userTargetFatsColumnName      = "target_fats"
+	userTargetCarbsColumnName     = "target_carbs"
 )
-
-// const (
-// 	mealTableName = "mealInfo"
-
-// 	mealIDColumnName = "id"
-// 	mealNameColumnName = "name"
-// 	mealWeightGrammsColumnName = "weightGramms"
-// 	mealCalories100gColumnName = "calories100g"
-// 	mealProteins100gColumnName = "proteins100g"
-// 	mealFats100gColumnName = "fats100g"
-// 	mealCarbs100gColumnName = "carbs100g"
-// 	mealDateColumnName = "date"
-// )

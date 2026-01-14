@@ -14,12 +14,17 @@ func (s *PGstorage) UpdateUser(ctx context.Context, id uint64, info models.UserI
 		Set(userEmailColumnName, info.Email).
 		Set(userSexColumnName, info.Sex).
 		Set(userAgeColumnName, info.Age).
+		Set(userHeightCmColumnName, info.HeightCm).
 		Set(userWeightKgColumnName, info.WeightKg).
 		Set(userTargetWeightKgColumnName, info.TargetWeightKg).
-		Set(userCurrentCaloriesColumnName, info.CurrentCalories).
-		Set(userCurrentProteinsColumnName, info.CurrentProteins).
-		Set(userCurrentFatsColumnName, info.CurrentFats).
-		Set(userCurrentCarbsColumnName, info.CurrentCarbs).
+		// Set(userCurrentCaloriesColumnName, info.CurrentCalories).	отдельно при получении события из кафки
+		// Set(userCurrentProteinsColumnName, info.CurrentProteins).
+		// Set(userCurrentFatsColumnName, info.CurrentFats).
+		// Set(userCurrentCarbsColumnName, info.CurrentCarbs).
+		Set(userTargetCaloriesColumnName, info.TargetCalories).
+		Set(userTargetProteinsColumnName, info.TargetProteins).
+		Set(userTargetFatsColumnName, info.TargetFats).
+		Set(userTargetCarbsColumnName, info.TargetCarbs).
 		Where(squirrel.Eq{userIDColumnName: id}).
 		PlaceholderFormat(squirrel.Dollar)
 

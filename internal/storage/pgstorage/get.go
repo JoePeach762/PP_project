@@ -56,12 +56,17 @@ func (storage *PGstorage) GetUsersByIds(ctx context.Context, ids []uint64) ([]*m
 			&u.Email,
 			&u.Sex,
 			&u.Age,
+			&u.HeightCm,
 			&u.WeightKg,
 			&u.TargetWeightKg,
 			&u.CurrentCalories,
 			&u.CurrentProteins,
 			&u.CurrentFats,
 			&u.CurrentCarbs,
+			&u.TargetCalories,
+			&u.TargetProteins,
+			&u.TargetFats,
+			&u.TargetCarbs,
 		); err != nil {
 			return nil, errors.Wrap(err, "failed to scan !users! row")
 		}
@@ -78,12 +83,17 @@ func (storage *PGstorage) getUsersQuery(IDs []uint64) squirrel.Sqlizer {
 			userEmailColumnName,
 			userSexColumnName,
 			userAgeColumnName,
+			userHeightCmColumnName,
 			userWeightKgColumnName,
 			userTargetWeightKgColumnName,
 			userCurrentCaloriesColumnName,
 			userCurrentProteinsColumnName,
 			userCurrentFatsColumnName,
 			userCurrentCarbsColumnName,
+			userTargetCaloriesColumnName,
+			userTargetProteinsColumnName,
+			userTargetFatsColumnName,
+			userTargetCarbsColumnName,
 		).
 		From(userTableName).
 		Where(squirrel.Eq{userIDColumnName: IDs}).

@@ -7,10 +7,7 @@ import (
 )
 
 type service interface {
-	Add(ctx context.Context, infos []*models.UserInfo) error
-	GetByIds(ctx context.Context, ids []uint64) ([]*models.UserInfo, error)
-	Update(ctx context.Context, id uint64, info models.UserInfo) error
-	// Delete(ctx context.Context, id uint64) errors
+	AddMealToUser(ctx context.Context, id uint64, meal *models.MealInfo) error
 }
 
 type processor struct {

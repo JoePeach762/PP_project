@@ -59,12 +59,17 @@ func (storage *PGstorage) addUsersQuery(userInfos []*models.UserInfo) squirrel.S
 			Email:           info.Email,
 			Sex:             info.Sex,
 			Age:             info.Age,
+			HeightCm:        info.HeightCm,
 			WeightKg:        info.WeightKg,
 			TargetWeightKg:  info.TargetWeightKg,
 			CurrentCalories: 0,
 			CurrentProteins: 0,
 			CurrentFats:     0,
 			CurrentCarbs:    0,
+			TargetCalories:  info.TargetCalories,
+			TargetProteins:  info.TargetProteins,
+			TargetFats:      info.TargetFats,
+			TargetCarbs:     info.TargetCarbs,
 		}
 	})
 
@@ -75,12 +80,17 @@ func (storage *PGstorage) addUsersQuery(userInfos []*models.UserInfo) squirrel.S
 			userEmailColumnName,
 			userSexColumnName,
 			userAgeColumnName,
+			userHeightCmColumnName,
 			userWeightKgColumnName,
 			userTargetWeightKgColumnName,
 			userCurrentCaloriesColumnName,
 			userCurrentProteinsColumnName,
 			userCurrentFatsColumnName,
 			userCurrentCarbsColumnName,
+			userTargetCaloriesColumnName,
+			userTargetProteinsColumnName,
+			userTargetFatsColumnName,
+			userTargetCarbsColumnName,
 		).
 		PlaceholderFormat(squirrel.Dollar)
 	for _, info := range infos {
@@ -89,12 +99,17 @@ func (storage *PGstorage) addUsersQuery(userInfos []*models.UserInfo) squirrel.S
 			info.Email,
 			info.Sex,
 			info.Age,
+			info.HeightCm,
 			info.WeightKg,
 			info.TargetWeightKg,
 			info.CurrentCalories,
 			info.CurrentProteins,
 			info.CurrentFats,
 			info.CurrentCarbs,
+			info.TargetCalories,
+			info.TargetProteins,
+			info.TargetFats,
+			info.TargetCarbs,
 		)
 	}
 	return q

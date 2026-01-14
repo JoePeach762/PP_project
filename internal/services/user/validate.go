@@ -16,8 +16,14 @@ func (s *service) validateSingle(info *models.UserInfo) error {
 	if info.Age <= 0 || info.Age > 100 {
 		return fmt.Errorf("некорректный возраст %v", info.Age)
 	}
+	if info.HeightCm <= 0 || info.HeightCm > 300 {
+		return fmt.Errorf("некорректный рост %v", info.HeightCm)
+	}
 	if info.WeightKg <= 0 || info.WeightKg > 200 {
 		return fmt.Errorf("некорректный вес %v", info.WeightKg)
+	}
+	if info.TargetWeightKg <= 0 || info.TargetWeightKg > 200 {
+		return fmt.Errorf("некорректный целевой вес %v", info.TargetWeightKg)
 	}
 	if strings.ToLower(info.Sex) != "male" && strings.ToLower(info.Sex) != "female" {
 		return fmt.Errorf("некорректный пол %v", info.Sex)

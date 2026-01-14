@@ -7,7 +7,7 @@ import (
 )
 
 type processor interface {
-	Handle(ctx context.Context, info *models.UserInfo) error
+	AddMealToUser(ctx context.Context, id uint64, mealInfo *models.MealInfo) error
 }
 
 type consumer struct {

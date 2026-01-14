@@ -10,6 +10,17 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+type MealConsumedEvent struct {
+	UserID       uint64    `json:"user_id"`
+	Name         string    `json:"name"`
+	WeightGrams  float32   `json:"weight_grams"`
+	Calories100g float32   `json:"calories_100g"`
+	Proteins100g float32   `json:"proteins_100g"`
+	Fats100g     float32   `json:"fats_100g"`
+	Carbs100g    float32   `json:"carbs_100g"`
+	Date         time.Time `json:"date"`
+}
+
 func (c *consumer) Consume(ctx context.Context) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:           c.kafka,
@@ -25,16 +36,28 @@ func (c *consumer) Consume(ctx context.Context) {
 		if err != nil {
 			slog.Error("consumer.consume error", "error", err.Error())
 		}
-		var userInfo *models.UserInfo
-		err = json.Unmarshal(msg.Value, &userInfo)
-		if err != nil {
-			slog.Error("parce", "error", err)
+		var event MealConsumedEvent
+		if err := json.Unmarshal(msg.Value, &event); err != nil {
+			slog.Error("parse event", "error", err)
 			continue
 		}
-		err = c.processor.Handle(ctx, userInfo)
-		if err != nil {
-			slog.Error("Handle", "error", err)
+
+		mealInfo := &models.MealInfo{
+			Name:         event.Name,
+			WeightGrams:  event.WeightGrams,
+			Calories100g: event.Calories100g,
+			Proteins100g: event.Proteins100g,
+			Fats100g:     event.Fats100g,
+			Carbs100g:    event.Carbs100g,
+			// Date: парсинг зависит от формата
+		}
+
+		if err := c.processor.AddMealToUser(ctx, event.UserID, mealInfo); err != nil {
+			slog.Error("AddMealToUser", "error", err)
+			// TODO: повторный вызов или отправка в DLQ
 		}
 	}
 
 }
+
+// Поправить конфиг и бутстрап.
