@@ -7,24 +7,62 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/JoePeach762/PP_project/internal/models"
+	offutils "github.com/JoePeach762/PP_project/internal/services/meal/off_utils"
 )
 
 type HTTPClient struct {
-	client *http.Client
+	client    *http.Client
+	userAgent string
 }
 
-func (c *HTTPClient) FetchProduct(ctx context.Context, name string) (*models.OFFProduct, error) {
-	// Поиск по barcode или названию — упрощённо:
-	url := fmt.Sprintf("https://world.openfoodfacts.net/cgi/search.pl?search_terms=%s&json=1", url.QueryEscape(name))
-	resp, err := c.client.Get(url)
+func NewHTTPClient(userAgent string) *HTTPClient {
+	transport := &http.Transport{
+		MaxIdleConns:    10,
+		IdleConnTimeout: 30 * time.Second,
+	}
+
+	client := &http.Client{
+		Timeout:   10 * time.Second,
+		Transport: transport,
+	}
+
+	return &HTTPClient{
+		client:    client,
+		userAgent: userAgent,
+	}
+}
+
+func (c *HTTPClient) FetchProduct(ctx context.Context, name string) (*models.MealTemplate, error) {
+	baseURL := "https://world.openfoodfacts.org/cgi/search.pl"
+	params := url.Values{}
+	params.Add("search_terms", name)
+	params.Add("search_simple", "1")
+	params.Add("action", "process")
+	params.Add("json", "1")
+	params.Add("page_size", "1")
+	params.Add("fields", "product_name,nutriments")
+
+	req, err := http.NewRequestWithContext(ctx, "GET", baseURL+"?"+params.Encode(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Set("User-Agent", c.userAgent)
+
+	resp, err := c.client.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	var result OFFSearchResult
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("OFF returned %d", resp.StatusCode)
+	}
+
+	var result offutils.OFFSearchResponse
 	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
 		return nil, err
 	}
@@ -34,11 +72,17 @@ func (c *HTTPClient) FetchProduct(ctx context.Context, name string) (*models.OFF
 	}
 
 	p := result.Products[0]
-	return &OFFProduct{
+	n := p.Nutriments
+
+	if n.EnergyKcal == 0 && n.Proteins == 0 && n.Fat == 0 && n.Carbohydrates == 0 {
+		return nil, errors.New("нет данных о нутриентах")
+	}
+
+	return &models.MealTemplate{
 		Name:         p.ProductName,
-		Calories100g: float32(p.EnergyKcal),
-		Proteins100g: float32(p.Proteins),
-		Fats100g:     float32(p.Fat),
-		Carbs100g:    float32(p.Carbohydrates),
+		Calories100g: n.EnergyKcal,
+		Proteins100g: n.Proteins,
+		Fats100g:     n.Fat,
+		Carbs100g:    n.Carbohydrates,
 	}, nil
 }

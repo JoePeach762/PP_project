@@ -6,6 +6,6 @@ import (
 	"github.com/JoePeach762/PP_project/internal/models"
 )
 
-func (s *service) AddMealToUser(ctx context.Context, id uint64, meal models.MealInfo) error {
-	return s.storage.AddMealToUser(ctx, id, meal)
+func (s *Service) AddMealToUser(ctx context.Context, meal *models.MealInfo) error {
+	return s.storage.AddMealToUser(ctx, meal)
 }

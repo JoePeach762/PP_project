@@ -2,13 +2,6 @@ package models
 
 import "time"
 
-type StudentInfo struct {
-	ID    uint64 `json:"id"`
-	Name  string `json:"name"`
-	Email string `json:"email"`
-	Age   uint64 `json:"age"`
-}
-
 type UserInfo struct {
 	ID              uint64 `json:"id"`
 	Name            string `json:"name"`             //John
@@ -34,7 +27,7 @@ type MealInput struct {
 	UserID      uint64  `json:"user_id"`
 }
 
-type OFFProduct struct {
+type MealTemplate struct {
 	Name         string  `json:"name"`
 	Calories100g float32 `json:"calories_100g"`
 	Proteins100g float32 `json:"proteins_100g"`
@@ -44,6 +37,7 @@ type OFFProduct struct {
 
 type MealInfo struct {
 	ID           uint64    `json:"id"`
+	UserId       uint64    `json:"user_id"`
 	Name         string    `json:"name"`         //Grilled chicken
 	WeightGrams  float32   `json:"weight_grams"` //200
 	Calories100g float32   `json:"calories_100g"`

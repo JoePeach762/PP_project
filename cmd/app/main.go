@@ -1,8 +1,7 @@
 package main
 
 import (
-	"fmt"
-	"os"
+	"log"
 
 	"github.com/JoePeach762/PP_project/config"
 	"github.com/JoePeach762/PP_project/internal/bootstrap"
@@ -10,10 +9,14 @@ import (
 
 func main() {
 
-	cfg, err := config.LoadConfig(os.Getenv("configPath"))
+	cfg, err := config.LoadConfig("config.yaml")
 	if err != nil {
-		panic(fmt.Sprintf("ошибка парсинга конфига, %v", err))
+		log.Fatal("failed to load config:", err)
 	}
+
+	pgConn := cfg.Database.ConnString()
+	redisAddr := cfg.Redis.Addr
+	userAgent := cfg.MealServiceSettings.OFFUserAgent
 
 	studentsStorage := bootstrap.InitPGStorage(cfg)
 	studentService := bootstrap.InitStudentService(studentsStorage, cfg)

@@ -8,13 +8,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (s *PGstorage) AddMealToUser(ctx context.Context, id uint64, info models.MealInfo) error {
+func (s *PGstorage) AddMealToUser(ctx context.Context, info *models.MealInfo) error {
 	query := squirrel.Update(userTableName).
 		Set(userCurrentCaloriesColumnName, info.Calories100g*info.WeightGrams/100).
 		Set(userCurrentProteinsColumnName, info.Proteins100g*info.WeightGrams/100).
 		Set(userCurrentFatsColumnName, info.Fats100g*info.WeightGrams/100).
 		Set(userCurrentCarbsColumnName, info.Carbs100g*info.WeightGrams/100).
-		Where(squirrel.Eq{userIDColumnName: id}).
+		Where(squirrel.Eq{userIDColumnName: info.UserId}).
 		PlaceholderFormat(squirrel.Dollar)
 
 	queryText, args, err := query.ToSql()

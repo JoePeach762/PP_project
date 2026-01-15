@@ -8,33 +8,6 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (storage *PGstorage) GetStudentInfoByIDs(ctx context.Context, IDs []uint64) ([]*models.StudentInfo, error) {
-	query := storage.getQuery(IDs)
-	queryText, args, err := query.ToSql()
-	if err != nil {
-		return nil, errors.Wrap(err, "generate query error")
-	}
-	rows, err := storage.db.Query(ctx, queryText, args...)
-	if err != nil {
-		return nil, errors.Wrap(err, "quering error")
-	}
-	var students []*models.StudentInfo
-	for rows.Next() {
-		var s models.StudentInfo
-		if err := rows.Scan(&s.ID, &s.Name, &s.Email, &s.Age); err != nil {
-			return nil, errors.Wrap(err, "failed to scan row")
-		}
-		students = append(students, &s)
-	}
-	return students, nil
-}
-
-func (storage *PGstorage) getQuery(IDs []uint64) squirrel.Sqlizer {
-	q := squirrel.Select(studentIDColumnName, studentNameColumnName, studentEmailColumnName, studentAgeColumnName).From(studentTableName).
-		Where(squirrel.Eq{studentIDColumnName: IDs}).PlaceholderFormat(squirrel.Dollar)
-	return q
-}
-
 func (storage *PGstorage) GetUsersByIds(ctx context.Context, ids []uint64) ([]*models.UserInfo, error) {
 	query := storage.getUsersQuery(ids)
 	queryText, args, err := query.ToSql()
@@ -97,6 +70,58 @@ func (storage *PGstorage) getUsersQuery(IDs []uint64) squirrel.Sqlizer {
 		).
 		From(userTableName).
 		Where(squirrel.Eq{userIDColumnName: IDs}).
+		PlaceholderFormat(squirrel.Dollar)
+	return q
+}
+
+func (storage *PGstorage) GetMealsByIds(ctx context.Context, ids []uint64) ([]*models.MealInfo, error) {
+	query := storage.getMealsQuery(ids)
+	queryText, args, err := query.ToSql()
+	if err != nil {
+		return nil, errors.Wrap(err, "generate !meals! query error")
+	}
+	rows, err := storage.db.Query(ctx, queryText, args...)
+	if err != nil {
+		return nil, errors.Wrap(err, "quering !meals! error")
+	}
+	defer rows.Close()
+
+	var meals []*models.MealInfo
+	for rows.Next() {
+		var m models.MealInfo
+		if err := rows.Scan(
+			&m.ID,
+			&m.UserId,
+			&m.Name,
+			&m.WeightGrams,
+			&m.Calories100g,
+			&m.Proteins100g,
+			&m.Fats100g,
+			&m.Carbs100g,
+			&m.Date,
+		); err != nil {
+			return nil, errors.Wrap(err, "failed to scan !meals! row")
+		}
+		meals = append(meals, &m)
+	}
+	return meals, nil
+}
+
+func (storage *PGstorage) getMealsQuery(IDs []uint64) squirrel.Sqlizer {
+	q := squirrel.
+		Select(
+			mealIDColumnName,
+			mealUserIDcolumnName,
+			mealNameColumnName,
+			mealWeightGramsColumnName,
+			mealCalories100gColumnName,
+			mealProteins100gColumnName,
+			mealFats100gColumnName,
+			mealCarbs100gColumnName,
+			mealDateColumnName,
+		).
+		From(mealTableName).
+		Where(squirrel.Eq{mealIDColumnName: IDs}).
 		PlaceholderFormat(squirrel.Dollar)
 	return q
 }

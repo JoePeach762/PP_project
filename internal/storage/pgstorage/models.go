@@ -2,13 +2,6 @@ package pgstorage
 
 import "time"
 
-type StudentInfo struct {
-	ID    uint64 `db:"id"`
-	Name  string `db:"name"`
-	Email string `db:"email"`
-	Age   uint64 `db:"age"`
-}
-
 type UserInfo struct {
 	ID              uint64 `db:"id"`
 	Name            string `db:"name"`
@@ -30,23 +23,15 @@ type UserInfo struct {
 
 type MealInfo struct {
 	ID           uint64    `db:"id"`
+	UserId       uint64    `db:"user_id"`
 	Name         string    `db:"name"`
-	WeightGramms float32   `db:"weight_grams"`
+	WeightGrams  float32   `db:"weight_grams"`
 	Calories100g float32   `db:"calories_100g"`
 	Proteins100g float32   `db:"proteins_100g"`
 	Fats100g     float32   `db:"fats_100g"`
 	Carbs100g    float32   `db:"carbs_100g"`
 	Date         time.Time `db:"date"`
 }
-
-const (
-	studentTableName = "students_info"
-
-	studentIDColumnName    = "id"
-	studentNameColumnName  = "name"
-	studentEmailColumnName = "email"
-	studentAgeColumnName   = "age"
-)
 
 const (
 	userTableName = "users_info"
@@ -67,4 +52,17 @@ const (
 	userTargetProteinsColumnName  = "target_proteins"
 	userTargetFatsColumnName      = "target_fats"
 	userTargetCarbsColumnName     = "target_carbs"
+)
+
+const (
+	mealTableName              = "meal_info"
+	mealIDColumnName           = "id"
+	mealUserIDcolumnName       = "user_id"
+	mealNameColumnName         = "name"
+	mealWeightGramsColumnName  = "weight_grams"
+	mealCalories100gColumnName = "calories_100g"
+	mealProteins100gColumnName = "proteins_100g"
+	mealFats100gColumnName     = "fats_100g"
+	mealCarbs100gColumnName    = "carbs_100g"
+	mealDateColumnName         = "date"
 )

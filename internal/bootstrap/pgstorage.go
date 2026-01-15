@@ -1,21 +1,14 @@
 package bootstrap
 
 import (
-	"fmt"
-	"log"
-
-	"github.com/JoePeach762/PP_project/config"
 	"github.com/JoePeach762/PP_project/internal/storage/pgstorage"
+	"github.com/pkg/errors"
 )
 
-func InitPGStorage(cfg *config.Config) *pgstorage.PGstorage {
-
-	connectionString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
-		cfg.Database.Username, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port, cfg.Database.DBName)
-	storage, err := pgstorage.NewPGStorage(connectionString)
+func NewPGStorage(connString string) (*pgstorage.PGstorage, error) {
+	storage, err := pgstorage.NewPGStorage(connString)
 	if err != nil {
-		log.Panic(fmt.Sprintf("ошибка инициализации БД, %v", err))
-		panic(err)
+		return nil, errors.Wrap(err, "ошибка инициализации PostgreSQL")
 	}
-	return storage
+	return storage, nil
 }

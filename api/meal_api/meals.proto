@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package meals.service.v1;
+
+import "models/meal_model.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/JoePeach762/PP_project/internal/pb/meals_api";
+
+service MealService {
+  rpc AddMeal(AddMealRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/meals"
+      body: "*"
+    };
+  }
+
+  rpc GetMeals(GetMealsRequest) returns (GetMealsResponse) {
+    option (google.api.http) = {
+      get: "/v1/meals"
+    };
+  }
+}
+
+message AddMealRequest {
+  string name = 1;
+  float weight_grams = 2;
+  uint64 user_id = 3;
+}
+
+message GetMealsRequest {
+  uint64 user_id = 1;
+}
+
+message GetMealsResponse {
+  repeated meals.models.v1.MealInfo meals = 1;
+}

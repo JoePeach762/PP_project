@@ -11,10 +11,10 @@ type storage interface {
 	GetUsersByIds(ctx context.Context, ids []uint64) ([]*models.UserInfo, error)
 	UpdateUser(ctx context.Context, id uint64, info models.UserInfo) error
 	DeleteUsers(ctx context.Context, ids []uint64) error
-	AddMealToUser(ctx context.Context, id uint64, mealInfo models.MealInfo) error
+	AddMealToUser(ctx context.Context, mealInfo *models.MealInfo) error
 }
 
-type service struct {
+type Service struct {
 	storage       storage
 	minNameLength uint32
 	maxNameLength uint32
@@ -28,8 +28,8 @@ func NewUserService(ctx context.Context,
 	maxNameLength uint32,
 	minWeight uint32,
 	maxWeight uint32,
-) *service {
-	return &service{
+) *Service {
+	return &Service{
 		storage:       storage,
 		minNameLength: minNameLength,
 		maxNameLength: maxNameLength,

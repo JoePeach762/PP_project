@@ -7,15 +7,15 @@ import (
 )
 
 type service interface {
-	AddMealToUser(ctx context.Context, id uint64, meal *models.MealInfo) error
+	AddMealToUser(ctx context.Context, info *models.MealInfo) error
 }
 
-type processor struct {
+type Processor struct {
 	service service
 }
 
-func NewUserProcessor(ctx context.Context, service service) *processor {
-	return &processor{
+func NewUserProcessor(ctx context.Context, service service) *Processor {
+	return &Processor{
 		service: service,
 	}
 }

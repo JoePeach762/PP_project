@@ -6,6 +6,6 @@ import (
 	"github.com/JoePeach762/PP_project/internal/models"
 )
 
-func (s *service) Publish(ctx context.Context, info *models.MealInfo) error {
-	return s.producer.PublishMealConsumed(ctx, info)
+func (s *Service) Publish(ctx context.Context, event *models.MealInfo) error {
+	return s.producer.PublishMealConsumed(ctx, event)
 }

@@ -1,8 +1,13 @@
 package mealproducer
 
-import "github.com/segmentio/kafka-go"
+import (
+	"github.com/segmentio/kafka-go"
+)
 
-type producer struct {
-	brokers []string
-	writer  *kafka.Writer
+type MealKafkaProducer struct {
+	writer *kafka.Writer
+}
+
+func NewKafkaProducer(writer *kafka.Writer) *MealKafkaProducer {
+	return &MealKafkaProducer{writer: writer}
 }

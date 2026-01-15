@@ -7,17 +7,17 @@ import (
 )
 
 type processor interface {
-	AddMealToUser(ctx context.Context, id uint64, mealInfo *models.MealInfo) error
+	AddMealToUser(ctx context.Context, mealInfo *models.MealInfo) error
 }
 
-type consumer struct {
+type Consumer struct {
 	processor processor
 	kafka     []string
 	topic     string
 }
 
-func NewUserConsumer(processor processor, kafka []string, topic string) *consumer {
-	return &consumer{
+func NewUserConsumer(processor processor, kafka []string, topic string) *Consumer {
+	return &Consumer{
 		processor: processor,
 		kafka:     kafka,
 		topic:     topic,

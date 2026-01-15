@@ -7,7 +7,7 @@ import (
 	"github.com/JoePeach762/PP_project/internal/models"
 )
 
-func (s *service) calculateTargets(infos []*models.UserInfo) error {
+func (s *Service) calculateTargets(infos []*models.UserInfo) error {
 	for _, info := range infos {
 		if err := s.calculateTargetsSingle(info); err != nil {
 			return err
@@ -16,7 +16,7 @@ func (s *service) calculateTargets(infos []*models.UserInfo) error {
 	return nil
 }
 
-func (s *service) calculateTargetsSingle(info *models.UserInfo) error {
+func (s *Service) calculateTargetsSingle(info *models.UserInfo) error {
 	if info.WeightKg == 0 || info.HeightCm == 0 || info.Age == 0 {
 		return errors.New("недостаточно данных для расчёта целей")
 	}

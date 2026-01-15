@@ -21,7 +21,7 @@ type MealConsumedEvent struct {
 	Date         time.Time `json:"date"`
 }
 
-func (c *consumer) Consume(ctx context.Context) {
+func (c *Consumer) Consume(ctx context.Context) {
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:           c.kafka,
 		GroupID:           "UserService_group",
@@ -49,7 +49,7 @@ func (c *consumer) Consume(ctx context.Context) {
 			Proteins100g: event.Proteins100g,
 			Fats100g:     event.Fats100g,
 			Carbs100g:    event.Carbs100g,
-			// Date: парсинг зависит от формата
+			Date:         event.Date,
 		}
 
 		if err := c.processor.AddMealToUser(ctx, event.UserID, mealInfo); err != nil {
@@ -59,5 +59,3 @@ func (c *consumer) Consume(ctx context.Context) {
 	}
 
 }
-
-// Поправить конфиг и бутстрап.

@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "students_api/students.proto",
+    "title": "meal_api/meals.proto",
     "version": "version not set"
   },
   "tags": [
     {
-      "name": "StudentsService"
+      "name": "MealService"
     }
   ],
   "consumes": [
@@ -16,14 +16,14 @@
     "application/json"
   ],
   "paths": {
-    "/studentInfo/get-by-ids": {
-      "post": {
-        "operationId": "StudentsService_GetStudentInfoByIDs",
+    "/v1/meals": {
+      "get": {
+        "operationId": "MealService_GetMeals",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetStudentInfoByIDsResponse"
+              "$ref": "#/definitions/v1GetMealsResponse"
             }
           },
           "default": {
@@ -35,27 +35,25 @@
         },
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/v1GetStudentInfoByIDsRequest"
-            }
+            "name": "userId",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "uint64"
           }
         ],
         "tags": [
-          "StudentsService"
+          "MealService"
         ]
-      }
-    },
-    "/studentInfo/upsert": {
+      },
       "post": {
-        "operationId": "StudentsService_UpsertStudentInfos",
+        "operationId": "MealService_AddMeal",
         "responses": {
           "200": {
             "description": "A successful response.",
             "schema": {
-              "$ref": "#/definitions/v1GetStudentInfoUpsertResponce"
+              "type": "object",
+              "properties": {}
             }
           },
           "default": {
@@ -71,12 +69,12 @@
             "in": "body",
             "required": true,
             "schema": {
-              "$ref": "#/definitions/v1GetStudentInfoUpsertRequest"
+              "$ref": "#/definitions/v1AddMealRequest"
             }
           }
         ],
         "tags": [
-          "StudentsService"
+          "MealService"
         ]
       }
     }
@@ -110,76 +108,71 @@
         }
       }
     },
-    "v1GetStudentInfoByIDsRequest": {
+    "v1AddMealRequest": {
       "type": "object",
       "properties": {
-        "ids": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "format": "uint64"
-          }
+        "name": {
+          "type": "string"
+        },
+        "weightGrams": {
+          "type": "number",
+          "format": "float"
+        },
+        "userId": {
+          "type": "string",
+          "format": "uint64"
         }
       }
     },
-    "v1GetStudentInfoByIDsResponse": {
+    "v1GetMealsResponse": {
       "type": "object",
       "properties": {
-        "studentInfos": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "$ref": "#/definitions/v1StudentsInfoModel"
-          }
-        }
-      }
-    },
-    "v1GetStudentInfoUpsertRequest": {
-      "type": "object",
-      "properties": {
-        "students": {
+        "meals": {
           "type": "array",
           "items": {
             "type": "object",
-            "$ref": "#/definitions/v1StudentsUpsertModel"
+            "$ref": "#/definitions/v1MealInfo"
           }
         }
       }
     },
-    "v1GetStudentInfoUpsertResponce": {
-      "type": "object"
-    },
-    "v1StudentsInfoModel": {
+    "v1MealInfo": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string",
           "format": "uint64"
         },
+        "userId": {
+          "type": "string",
+          "format": "uint64"
+        },
         "name": {
           "type": "string"
         },
-        "email": {
-          "type": "string"
+        "weightGrams": {
+          "type": "number",
+          "format": "float"
         },
-        "age": {
+        "calories100g": {
+          "type": "number",
+          "format": "float"
+        },
+        "proteins100g": {
+          "type": "number",
+          "format": "float"
+        },
+        "fats100g": {
+          "type": "number",
+          "format": "float"
+        },
+        "carbs100g": {
+          "type": "number",
+          "format": "float"
+        },
+        "date": {
           "type": "string",
-          "format": "uint64"
-        }
-      }
-    },
-    "v1StudentsUpsertModel": {
-      "type": "object",
-      "properties": {
-        "name": {
-          "type": "string"
-        },
-        "email": {
-          "type": "string"
-        },
-        "age": {
-          "type": "string",
-          "format": "uint64"
+          "format": "date-time"
         }
       }
     }

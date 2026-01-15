@@ -35,22 +35,6 @@ func NewPGStorage(connString string) (*PGstorage, error) {
 }
 
 func (s *PGstorage) initTables() error {
-	sql := fmt.Sprintf(`
-    CREATE TABLE IF NOT EXISTS %v (
-        %v SERIAL PRIMARY KEY,
-        %v VARCHAR(100) NOT NULL,
-        %v VARCHAR(255) UNIQUE NOT NULL,
-        %v INT
-    )`, studentTableName,
-		studentIDColumnName,
-		studentNameColumnName,
-		studentEmailColumnName,
-		studentAgeColumnName,
-	)
-	_, err := s.db.Exec(context.Background(), sql)
-	if err != nil {
-		return errors.Wrap(err, "init students tables")
-	}
 
 	userSQL := fmt.Sprintf(`
 		CREATE TABLE IF NOT EXISTS %s (
@@ -89,9 +73,50 @@ func (s *PGstorage) initTables() error {
 		userTargetCarbsColumnName, userTargetCarbsColumnName,
 	)
 
-	_, err = s.db.Exec(context.Background(), userSQL)
+	_, err := s.db.Exec(context.Background(), userSQL)
 	if err != nil {
 		return errors.Wrap(err, "init users table")
+	}
+
+	mealSQL := fmt.Sprintf(`
+		CREATE TABLE IF NOT EXISTS %s (
+			%s SERIAL PRIMARY KEY,
+			%s BIGINT NOT NULL REFERENCES %s(%s) ON DELETE CASCADE,
+			%s VARCHAR(255) NOT NULL,
+			%s FLOAT4 NOT NULL CHECK (%s > 0),
+			%s FLOAT4 NOT NULL,
+			%s FLOAT4 NOT NULL,
+			%s FLOAT4 NOT NULL,
+			%s FLOAT4 NOT NULL,
+			%s TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+		)`, mealTableName,
+		mealIDColumnName,
+		mealUserIDcolumnName, userTableName, userIDColumnName,
+		mealNameColumnName,
+		mealWeightGramsColumnName, mealWeightGramsColumnName,
+		mealCalories100gColumnName,
+		mealProteins100gColumnName,
+		mealFats100gColumnName,
+		mealCarbs100gColumnName,
+		mealDateColumnName,
+	)
+
+	_, err = s.db.Exec(context.Background(), mealSQL)
+	if err != nil {
+		return errors.Wrap(err, "init meal_info table")
+	}
+
+	indexSQL := fmt.Sprintf(`
+	CREATE INDEX IF NOT EXISTS idx_meal_info_user_date 
+	ON %s (%s, %s)`,
+		mealTableName,
+		mealUserIDcolumnName,
+		mealDateColumnName,
+	)
+
+	_, err = s.db.Exec(context.Background(), indexSQL)
+	if err != nil {
+		return errors.Wrap(err, "create meal_info index")
 	}
 
 	return nil
