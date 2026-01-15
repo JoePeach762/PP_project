@@ -2,49 +2,86 @@ package config
 
 import (
 	"fmt"
-	"os"
+	"strings"
 
-	"go.yaml.in/yaml/v4"
+	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
 
 type Config struct {
-	Database               DatabaseConfig         `yaml:"database"`
-	Kafka                  KafkaConfig            `yaml:"kafka"`
-	StudentServiceSettings StudentServiceSettings `yaml:"StudentServiceSettings"`
+	HTTPPort int `mapstructure:"http_port"`
+
+	Database DatabaseConfig `mapstructure:"database"`
+	Redis    RedisConfig    `mapstructure:"redis"`
+	Kafka    KafkaConfig    `mapstructure:"kafka"`
+
+	UserServiceSettings UserServiceSettings `mapstructure:"user_service"`
+	MealServiceSettings MealServiceSettings `mapstructure:"meal_service"`
 }
 
 type DatabaseConfig struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
-	DBName   string `yaml:"name"`
-	SSLMode  string `yaml:"ssl_mode"`
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+	DBName   string `mapstructure:"name"`
+	SSLMode  string `mapstructure:"ssl_mode"`
+}
+
+func (d *DatabaseConfig) ConnString() string {
+	return fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
+		d.Username, d.Password, d.Host, d.Port, d.DBName, d.SSLMode)
+}
+
+type RedisConfig struct {
+	Addr     string `mapstructure:"addr"`     // localhost:6379
+	Password string `mapstructure:"password"` // обычно пусто
+	DB       int    `mapstructure:"db"`
 }
 
 type KafkaConfig struct {
-	Host                       string `yaml:"host"`
-	Port                       int    `yaml:"port"`
-	StudentInfoUpsertTopicName string `yaml:"student_info_upsert_topic_name"`
-	StudentInfoEventTopicName  string `yaml:"student_info_event_topic_name"`
+	Brokers []string `mapstructure:"brokers"` // ["localhost:9092"]
+	Topics  struct {
+		UserEvents   string `mapstructure:"user_events"`
+		MealConsumed string `mapstructure:"meal_consumed"`
+	} `mapstructure:"topics"`
 }
 
-type StudentServiceSettings struct {
-	MinNameLen int `yaml:"minNameLen"`
-	MaxNameLen int `yaml:"maxNameLen"`
+type UserServiceSettings struct {
+	MinNameLen uint8 `mapstructure:"min_name_len"`
+	MaxNameLen uint8 `mapstructure:"max_name_len"`
+	MinWeight  uint8 `mapstructure:"min_weight"`
+	MaxWeight  uint8 `mapstructure:"max_weight"`
 }
 
-func LoadConfig(filename string) (*Config, error) {
-	data, err := os.ReadFile(filename)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read config file: %w", err)
+type MealServiceSettings struct {
+	MinNameLen     uint32 `mapstructure:"min_name_len"`
+	MaxNameLen     uint32 `mapstructure:"max_name_len"`
+	MaxWeightGrams uint32 `mapstructure:"max_weight_grams"`
+	OFFUserAgent   string `mapstructure:"off_user_agent"`
+}
+
+func LoadConfig(configPath string) (*Config, error) {
+	_ = godotenv.Load()
+
+	viper.SetConfigFile(configPath)
+	viper.SetConfigType("yaml")
+
+	viper.AutomaticEnv()
+	viper.SetEnvPrefix("APP")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+
+	if err := viper.ReadInConfig(); err != nil {
+		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
+			return nil, fmt.Errorf("config file not found: %s", configPath)
+		}
+		return nil, fmt.Errorf("error reading config: %w", err)
 	}
 
-	var config Config
-	err = yaml.Unmarshal(data, &config)
-	if err != nil {
-		return nil, fmt.Errorf("failed to unmarshal YAML: %w", err)
+	var cfg Config
+	if err := viper.Unmarshal(&cfg); err != nil {
+		return nil, fmt.Errorf("unable to decode config: %w", err)
 	}
 
-	return &config, nil
+	return &cfg, nil
 }

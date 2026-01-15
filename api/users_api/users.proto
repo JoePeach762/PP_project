@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package users.service.v1;
+
+import "models/user_model.proto";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/JoePeach762/PP_project/internal/pb/users_api";
+
+service UserService {
+  rpc CreateUsers(CreateUsersRequest) returns (CreateUsersResponse) {
+    option (google.api.http) = {
+      post: "/v1/users"
+      body: "*"
+    };
+  }
+
+  rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
+    option (google.api.http) = {
+      patch: "/v1/users/{user.id}"
+      body: "*"
+    };
+  }
+
+  rpc GetUsers(GetUsersRequest) returns (GetUsersResponse) {
+    option (google.api.http) = {
+      get: "/v1/users"
+    };
+  }
+
+  rpc DeleteUsers(DeleteUsersRequest) returns (DeleteUsersResponse) {
+    option (google.api.http) = {
+      delete: "/v1/users"
+      body: "*"
+    };
+  }
+}
+
+message CreateUsersRequest {
+  repeated users.models.v1.UserInfo users = 1;
+}
+
+message CreateUsersResponse {}
+
+message UpdateUserRequest {
+  users.models.v1.UserInfo user = 1;
+}
+
+message UpdateUserResponse {}
+
+message GetUsersRequest {
+  repeated uint64 ids = 1;
+}
+
+message GetUsersResponse {
+  repeated users.models.v1.UserInfo users = 1;
+}
+
+message DeleteUsersRequest {
+  repeated uint64 ids = 1;
+}
+
+message DeleteUsersResponse {}
