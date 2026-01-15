@@ -52,7 +52,7 @@ func (c *Consumer) Consume(ctx context.Context) {
 			Date:         event.Date,
 		}
 
-		if err := c.processor.AddMealToUser(ctx, event.UserID, mealInfo); err != nil {
+		if err := c.processor.AddMealToUser(ctx, mealInfo); err != nil {
 			slog.Error("AddMealToUser", "error", err)
 			// TODO: повторный вызов или отправка в DLQ
 		}

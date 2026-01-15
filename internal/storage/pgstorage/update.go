@@ -17,10 +17,6 @@ func (s *PGstorage) UpdateUser(ctx context.Context, id uint64, info models.UserI
 		Set(userHeightCmColumnName, info.HeightCm).
 		Set(userWeightKgColumnName, info.WeightKg).
 		Set(userTargetWeightKgColumnName, info.TargetWeightKg).
-		// Set(userCurrentCaloriesColumnName, info.CurrentCalories).	отдельно при получении события из кафки
-		// Set(userCurrentProteinsColumnName, info.CurrentProteins).
-		// Set(userCurrentFatsColumnName, info.CurrentFats).
-		// Set(userCurrentCarbsColumnName, info.CurrentCarbs).
 		Set(userTargetCaloriesColumnName, info.TargetCalories).
 		Set(userTargetProteinsColumnName, info.TargetProteins).
 		Set(userTargetFatsColumnName, info.TargetFats).
