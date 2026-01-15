@@ -7,9 +7,16 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
-	userapi "github.com/JoePeach762/PP_project/internal/api/user_api"
 	userconsumer "github.com/JoePeach762/PP_project/internal/consumer/user"
+	"github.com/JoePeach762/PP_project/internal/services/meal"
+	"github.com/JoePeach762/PP_project/internal/services/user"
+
+	"github.com/JoePeach762/PP_project/internal/pb/meals_api"
+	"github.com/JoePeach762/PP_project/internal/pb/users_api"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -18,63 +25,127 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func AppRun(
-	userAPI *userapi.UserAPI,
+type Server struct {
+	grpcServer *grpc.Server
+	httpServer *http.Server
+}
+
+func NewServer() *Server {
+	return &Server{}
+}
+
+// AppRun запускает все компоненты приложения
+func (s *Server) AppRun(
+	userGRPC *user.GRPCServer, // ← ИСПРАВЛЕНО: user.GRPCServer вместо userapi.UserAPI
+	mealGRPC *meal.GRPCServer, // ← ИСПРАВЛЕНО: meal.GRPCServer вместо mealapi.MealAPI
 	userConsumer *userconsumer.Consumer,
-) {
-	// Запуск Kafka consumers
-	go userConsumer.Consume(context.Background())
+) error {
+	// Контекст с отменой для graceful shutdown
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	// Ловим SIGINT и SIGTERM
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	// Запуск Kafka consumer
+	go userConsumer.Consume(ctx)
 
 	// Запуск gRPC сервера
+	grpcAddr := ":50051"
 	go func() {
-		if err := runGRPCServer(userAPI); err != nil {
-			panic(fmt.Errorf("failed to run gRPC server: %v", err))
+		if err := s.runGRPCServer(grpcAddr, userGRPC, mealGRPC); err != nil { // ← ИСПРАВЛЕНО
+			slog.Error("gRPC server failed", "error", err)
+			cancel()
 		}
 	}()
 
+	// Ждём, пока gRPC сервер запустится
+	time.Sleep(100 * time.Millisecond)
+
 	// Запуск HTTP/gRPC-Gateway
-	if err := runGatewayServer(); err != nil {
-		panic(fmt.Errorf("failed to run gateway server: %v", err))
+	httpAddr := ":8080"
+	if err := s.runGatewayServer(ctx, httpAddr, grpcAddr); err != nil {
+		return fmt.Errorf("gateway server failed: %w", err)
 	}
+
+	// Ожидание сигнала завершения
+	<-sigChan
+	slog.Info("Shutting down...")
+
+	// Graceful shutdown
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer shutdownCancel()
+
+	if s.httpServer != nil {
+		s.httpServer.Shutdown(shutdownCtx)
+	}
+	if s.grpcServer != nil {
+		s.grpcServer.GracefulStop()
+	}
+
+	return nil
 }
 
-func runGRPCServer(userAPI *userapi.UserAPI) error {
-	lis, err := net.Listen("tcp", ":50051")
+// ИСПРАВЛЕНО: принимаем *user.GRPCServer и *meal.GRPCServer
+func (s *Server) runGRPCServer(addr string, userGRPC *user.GRPCServer, mealGRPC *meal.GRPCServer) error {
+	lis, err := net.Listen("tcp", addr)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to listen: %w", err)
 	}
 
-	s := grpc.NewServer()
-	users_api.RegisterUserServiceServer(s, userAPI) // ← новая строка
+	s.grpcServer = grpc.NewServer()
+	users_api.RegisterUserServiceServer(s.grpcServer, userGRPC) // ← передаём gRPC-сервер
+	meals_api.RegisterMealServiceServer(s.grpcServer, mealGRPC) // ← передаём gRPC-сервер
 
-	slog.Info("gRPC server listening on :50051")
-	return s.Serve(lis)
+	slog.Info("gRPC server listening", "addr", addr)
+	return s.grpcServer.Serve(lis)
 }
 
-func runGatewayServer() error {
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
+func (s *Server) runGatewayServer(ctx context.Context, httpAddr, grpcAddr string) error {
+	// Настройка маршрутизатора
+	r := chi.NewRouter()
 
+	// Swagger
 	swaggerPath := os.Getenv("SWAGGER_PATH")
 	if swaggerPath == "" {
-		swaggerPath = "./internal/pb/swagger/students_api/students.swagger.json"
+		swaggerPath = "./internal/pb/swagger/users_api/users.swagger.json"
 	}
 
-	r := chi.NewRouter()
 	r.Get("/swagger.json", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, swaggerPath)
 	})
-	r.Get("/docs/*", httpSwagger.Handler(httpSwagger.URL("/swagger.json")))
+	r.Get("/docs/*", httpSwagger.Handler(
+		httpSwagger.URL("/swagger.json"),
+	))
 
+	// gRPC-Gateway мультиплексор
 	mux := runtime.NewServeMux()
-	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
 
-	// Регистрация обоих сервисов
-	users_api.RegisterUserServiceHandlerFromEndpoint(ctx, mux, ":50051", opts)
+	// Регистрация всех сервисов
+	if err := users_api.RegisterUserServiceHandlerFromEndpoint(ctx, mux, grpcAddr, opts); err != nil {
+		return fmt.Errorf("failed to register user service: %w", err)
+	}
+	if err := meals_api.RegisterMealServiceHandlerFromEndpoint(ctx, mux, grpcAddr, opts); err != nil {
+		return fmt.Errorf("failed to register meal service: %w", err)
+	}
 
 	r.Mount("/", mux)
 
-	slog.Info("gRPC-Gateway server listening on :8080")
-	return http.ListenAndServe(":8080", r)
+	// Health-check
+	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+
+	s.httpServer = &http.Server{
+		Addr:    httpAddr,
+		Handler: r,
+	}
+
+	slog.Info("HTTP/gRPC-Gateway server listening", "addr", httpAddr)
+	return s.httpServer.ListenAndServe()
 }

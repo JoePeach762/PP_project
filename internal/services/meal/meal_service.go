@@ -16,7 +16,7 @@ type producer interface {
 
 type storage interface {
 	AddMeal(ctx context.Context, info *models.MealInfo) error
-	GetMealsByIds(ctx context.Context, ids []uint64) ([]*models.MealInfo, error)
+	GetMealsByUserId(ctx context.Context, id uint64) ([]*models.MealInfo, error)
 }
 
 type cache interface {
@@ -35,7 +35,6 @@ type Service struct {
 }
 
 func NewMealService(
-	ctx context.Context,
 	producer producer,
 	storage storage,
 	cache cache,

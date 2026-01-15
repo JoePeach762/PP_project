@@ -22,7 +22,7 @@ type Service struct {
 	maxWeight     uint32
 }
 
-func NewUserService(ctx context.Context,
+func NewUserService(
 	storage storage,
 	minNameLength uint32,
 	maxNameLength uint32,

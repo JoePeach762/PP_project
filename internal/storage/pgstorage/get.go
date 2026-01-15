@@ -74,8 +74,8 @@ func (storage *PGstorage) getUsersQuery(IDs []uint64) squirrel.Sqlizer {
 	return q
 }
 
-func (storage *PGstorage) GetMealsByIds(ctx context.Context, ids []uint64) ([]*models.MealInfo, error) {
-	query := storage.getMealsQuery(ids)
+func (storage *PGstorage) GetMealsByUserId(ctx context.Context, id uint64) ([]*models.MealInfo, error) {
+	query := storage.getMealsQuery(id)
 	queryText, args, err := query.ToSql()
 	if err != nil {
 		return nil, errors.Wrap(err, "generate !meals! query error")
@@ -107,7 +107,7 @@ func (storage *PGstorage) GetMealsByIds(ctx context.Context, ids []uint64) ([]*m
 	return meals, nil
 }
 
-func (storage *PGstorage) getMealsQuery(IDs []uint64) squirrel.Sqlizer {
+func (storage *PGstorage) getMealsQuery(UserId uint64) squirrel.Sqlizer {
 	q := squirrel.
 		Select(
 			mealIDColumnName,
@@ -121,7 +121,7 @@ func (storage *PGstorage) getMealsQuery(IDs []uint64) squirrel.Sqlizer {
 			mealDateColumnName,
 		).
 		From(mealTableName).
-		Where(squirrel.Eq{mealIDColumnName: IDs}).
+		Where(squirrel.Eq{mealUserIDcolumnName: UserId}).
 		PlaceholderFormat(squirrel.Dollar)
 	return q
 }

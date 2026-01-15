@@ -1,8 +1,6 @@
 package bootstrap
 
 import (
-	"context"
-
 	"github.com/JoePeach762/PP_project/config"
 	"github.com/JoePeach762/PP_project/internal/services/user"
 	"github.com/JoePeach762/PP_project/internal/storage/pgstorage"
@@ -10,7 +8,6 @@ import (
 
 func InitUserService(storage *pgstorage.PGstorage, cfg *config.Config) *user.Service {
 	return user.NewUserService(
-		context.Background(),
 		storage,
 		uint32(cfg.UserServiceSettings.MinNameLen),
 		uint32(cfg.UserServiceSettings.MaxNameLen),
