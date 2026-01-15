@@ -8,13 +8,9 @@ import (
 	"net/http"
 	"os"
 
-	studentsapi "github.com/JoePeach762/PP_project/internal/api/student_service_api"
 	userapi "github.com/JoePeach762/PP_project/internal/api/user_api"
-	studentsconsumer "github.com/JoePeach762/PP_project/internal/consumer/students_Info_upsert_consumer"
 	userconsumer "github.com/JoePeach762/PP_project/internal/consumer/user"
 
-	"github.com/JoePeach762/PP_project/internal/pb/students_api"
-	"github.com/JoePeach762/PP_project/internal/pb/users_api"
 	"github.com/go-chi/chi/v5"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -23,18 +19,15 @@ import (
 )
 
 func AppRun(
-	studentAPI *studentsapi.StudentServiceAPI,
-	userAPI *userapi.UserHandler,
-	studentConsumer *studentsconsumer.StudentInfoUpsertConsumer,
+	userAPI *userapi.UserAPI,
 	userConsumer *userconsumer.Consumer,
 ) {
 	// Запуск Kafka consumers
-	go studentConsumer.Consume(context.Background())
 	go userConsumer.Consume(context.Background())
 
 	// Запуск gRPC сервера
 	go func() {
-		if err := runGRPCServer(studentAPI, userAPI); err != nil {
+		if err := runGRPCServer(userAPI); err != nil {
 			panic(fmt.Errorf("failed to run gRPC server: %v", err))
 		}
 	}()
@@ -45,14 +38,13 @@ func AppRun(
 	}
 }
 
-func runGRPCServer(studentAPI *studentsapi.StudentServiceAPI, userAPI *userapi.UserHandler) error {
+func runGRPCServer(userAPI *userapi.UserAPI) error {
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		return err
 	}
 
 	s := grpc.NewServer()
-	students_api.RegisterStudentsServiceServer(s, studentAPI)
 	users_api.RegisterUserServiceServer(s, userAPI) // ← новая строка
 
 	slog.Info("gRPC server listening on :50051")
@@ -79,7 +71,6 @@ func runGatewayServer() error {
 	opts := []grpc.DialOption{grpc.WithTransportCredentials(insecure.NewCredentials())}
 
 	// Регистрация обоих сервисов
-	students_api.RegisterStudentsServiceHandlerFromEndpoint(ctx, mux, ":50051", opts)
 	users_api.RegisterUserServiceHandlerFromEndpoint(ctx, mux, ":50051", opts)
 
 	r.Mount("/", mux)
