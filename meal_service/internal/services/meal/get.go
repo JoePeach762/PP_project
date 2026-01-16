@@ -3,9 +3,9 @@ package meal
 import (
 	"context"
 
-	sharedmodels "github.com/JoePeach762/PP_project/shared/models"
+	"github.com/JoePeach762/PP_project/meal_service/internal/models"
 )
 
-func (s *Service) GetMealsByUserId(ctx context.Context, id uint64) ([]*sharedmodels.MealInfo, error) {
+func (s *Service) GetMealsByUserId(ctx context.Context, id uint64) ([]*models.MealInfo, error) {
 	return s.storage.GetMealsByUserId(ctx, id)
 }

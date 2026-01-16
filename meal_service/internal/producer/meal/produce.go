@@ -5,11 +5,11 @@ import (
 	"encoding/json"
 	"time"
 
-	sharedmodels "github.com/JoePeach762/PP_project/shared/models"
+	"github.com/JoePeach762/PP_project/meal_service/internal/models"
 	"github.com/segmentio/kafka-go"
 )
 
-func (p *MealKafkaProducer) PublishMealConsumed(ctx context.Context, meal *sharedmodels.MealInfo) error {
+func (p *MealKafkaProducer) PublishMealConsumed(ctx context.Context, meal *models.MealInfo) error {
 	data, err := json.Marshal(meal)
 	if err != nil {
 		return err

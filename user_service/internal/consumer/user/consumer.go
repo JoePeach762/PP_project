@@ -3,7 +3,7 @@ package userconsumer
 import (
 	"context"
 
-	"github.com/JoePeach762/PP_project/internal/models"
+	"github.com/JoePeach762/PP_project/user_service/internal/models"
 )
 
 type processor interface {

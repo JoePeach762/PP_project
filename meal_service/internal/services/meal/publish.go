@@ -3,9 +3,9 @@ package meal
 import (
 	"context"
 
-	sharedmodels "github.com/JoePeach762/PP_project/shared/models"
+	"github.com/JoePeach762/PP_project/meal_service/internal/models"
 )
 
-func (s *Service) Publish(ctx context.Context, event *sharedmodels.MealInfo) error {
+func (s *Service) Publish(ctx context.Context, event *models.MealInfo) error {
 	return s.producer.PublishMealConsumed(ctx, event)
 }

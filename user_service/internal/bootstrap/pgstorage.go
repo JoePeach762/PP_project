@@ -3,8 +3,8 @@ package bootstrap
 import (
 	"fmt"
 
-	"github.com/JoePeach762/PP_project/config"
-	"github.com/JoePeach762/PP_project/internal/storage/pgstorage"
+	"github.com/JoePeach762/PP_project/user_service/config"
+	"github.com/JoePeach762/PP_project/user_service/internal/storage/pgstorage"
 	"github.com/pkg/errors"
 )
 

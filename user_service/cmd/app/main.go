@@ -4,14 +4,13 @@ import (
 	"log"
 	"os"
 
-	"github.com/JoePeach762/PP_project/config"
-	"github.com/JoePeach762/PP_project/internal/bootstrap"
-	"github.com/JoePeach762/PP_project/internal/services/meal"
-	"github.com/JoePeach762/PP_project/internal/services/user"
+	"github.com/JoePeach762/PP_project/user_service/config"
+	"github.com/JoePeach762/PP_project/user_service/internal/bootstrap"
+	"github.com/JoePeach762/PP_project/user_service/internal/services/user"
 )
 
 func main() {
-	cfg, err := config.LoadConfig(os.Getenv("CONFIG_PATH"))
+	cfg, err := config.LoadConfig(os.Getenv("CONFIG_PATH_USER"))
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
@@ -21,20 +20,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to load pgstorage: %v", err)
 	}
-	redisCache, err := bootstrap.InitRedisCache(cfg)
-	if err != nil {
-		log.Fatalf("Failed to load rediscache: %v", err)
-	}
-	kafkaProducer := bootstrap.InitKafkaProducer(cfg)
-	offClient := bootstrap.InitOFFClient(cfg)
 
 	// Сервисы
 	userService := bootstrap.InitUserService(pgStorage, cfg)
-	mealService := bootstrap.InitMealService(pgStorage, redisCache, kafkaProducer, offClient, cfg)
 
 	// gRPC-серверы
 	userGRPC := user.NewGRPCServer(userService)
-	mealGRPC := meal.NewGRPCServer(mealService)
 
 	// Kafka
 	userProcessor := bootstrap.InitUserProcessor(userService)
@@ -42,7 +33,7 @@ func main() {
 
 	// Запуск сервера
 	server := bootstrap.NewServer()
-	if err := server.AppRun(userGRPC, mealGRPC, userConsumer); err != nil {
+	if err := server.AppRun(userGRPC, userConsumer); err != nil {
 		log.Fatalf("Server failed: %v", err)
 	}
 }

@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type UserInfo struct {
 	ID              uint64 `json:"id"`
 	Name            string `json:"name"`             //John
@@ -17,4 +19,16 @@ type UserInfo struct {
 	TargetProteins  uint32 `json:"target_proteins"`
 	TargetFats      uint32 `json:"target_fats"`
 	TargetCarbs     uint32 `json:"target_carbs"`
+}
+
+type MealInfo struct {
+	ID           uint64    `json:"id"`
+	UserId       uint64    `json:"user_id"`
+	Name         string    `json:"name"`         //Grilled chicken
+	WeightGrams  float32   `json:"weight_grams"` //200
+	Calories100g float32   `json:"calories_100g"`
+	Proteins100g float32   `json:"proteins_100g"`
+	Fats100g     float32   `json:"fats_100g"`
+	Carbs100g    float32   `json:"carbs_100g"`
+	Date         time.Time `json:"date"`
 }

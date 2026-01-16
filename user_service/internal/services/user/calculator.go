@@ -4,7 +4,7 @@ import (
 	"errors"
 	"math"
 
-	"github.com/JoePeach762/PP_project/internal/models"
+	"github.com/JoePeach762/PP_project/user_service/internal/models"
 )
 
 func (s *Service) calculateTargets(infos []*models.UserInfo) error {

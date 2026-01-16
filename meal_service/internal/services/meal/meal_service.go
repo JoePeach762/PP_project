@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/JoePeach762/PP_project/meal_service/internal/models"
-	sharedmodels "github.com/JoePeach762/PP_project/shared/models"
 )
 
 type OFFClient interface {
@@ -12,12 +11,12 @@ type OFFClient interface {
 }
 
 type producer interface {
-	PublishMealConsumed(ctx context.Context, event *sharedmodels.MealInfo) error
+	PublishMealConsumed(ctx context.Context, event *models.MealInfo) error
 }
 
 type storage interface {
-	AddMeal(ctx context.Context, info *sharedmodels.MealInfo) error
-	GetMealsByUserId(ctx context.Context, id uint64) ([]*sharedmodels.MealInfo, error)
+	AddMeal(ctx context.Context, info *models.MealInfo) error
+	GetMealsByUserId(ctx context.Context, id uint64) ([]*models.MealInfo, error)
 }
 
 type cache interface {

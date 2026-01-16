@@ -3,14 +3,14 @@ package pgstorage
 import (
 	"context"
 
-	sharedmodels "github.com/JoePeach762/PP_project/shared/models"
+	"github.com/JoePeach762/PP_project/meal_service/internal/models"
 	"github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 )
 
-func (storage *PGstorage) AddMeal(ctx context.Context, info *sharedmodels.MealInfo) error {
-	query := storage.addMealsQuery([]*sharedmodels.MealInfo{info})
+func (storage *PGstorage) AddMeal(ctx context.Context, info *models.MealInfo) error {
+	query := storage.addMealsQuery([]*models.MealInfo{info})
 	queryText, args, err := query.ToSql()
 	if err != nil {
 		return errors.Wrap(err, "generate !meals! single-query error")
@@ -22,7 +22,7 @@ func (storage *PGstorage) AddMeal(ctx context.Context, info *sharedmodels.MealIn
 	return err
 }
 
-func (storage *PGstorage) AddMeals(ctx context.Context, infos []*sharedmodels.MealInfo) error {
+func (storage *PGstorage) AddMeals(ctx context.Context, infos []*models.MealInfo) error {
 	query := storage.addMealsQuery(infos)
 	queryText, args, err := query.ToSql()
 	if err != nil {
@@ -35,8 +35,8 @@ func (storage *PGstorage) AddMeals(ctx context.Context, infos []*sharedmodels.Me
 	return err
 }
 
-func (storage *PGstorage) addMealsQuery(mealInfos []*sharedmodels.MealInfo) squirrel.Sqlizer {
-	infos := lo.Map(mealInfos, func(info *sharedmodels.MealInfo, _ int) *MealInfo {
+func (storage *PGstorage) addMealsQuery(mealInfos []*models.MealInfo) squirrel.Sqlizer {
+	infos := lo.Map(mealInfos, func(info *models.MealInfo, _ int) *MealInfo {
 		return &MealInfo{
 			ID:           info.ID,
 			UserId:       info.UserId,

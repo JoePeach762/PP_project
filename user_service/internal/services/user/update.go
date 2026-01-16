@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/JoePeach762/PP_project/internal/models"
+	"github.com/JoePeach762/PP_project/user_service/internal/models"
 )
 
 func (s *Service) Update(ctx context.Context, id uint64, info models.UserInfo) error {

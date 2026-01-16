@@ -3,9 +3,9 @@ package user
 import (
 	"context"
 
-	models "github.com/JoePeach762/PP_project/internal/models"
-	pbmodels "github.com/JoePeach762/PP_project/internal/pb/models"
-	"github.com/JoePeach762/PP_project/internal/pb/users_api"
+	models "github.com/JoePeach762/PP_project/user_service/internal/models"
+	pbmodels "github.com/JoePeach762/PP_project/user_service/internal/pb/models/user_models"
+	"github.com/JoePeach762/PP_project/user_service/internal/pb/users_api"
 )
 
 type GRPCServer struct {

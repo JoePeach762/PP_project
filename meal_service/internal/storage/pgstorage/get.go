@@ -3,12 +3,12 @@ package pgstorage
 import (
 	"context"
 
-	sharedmodels "github.com/JoePeach762/PP_project/shared/models"
+	"github.com/JoePeach762/PP_project/meal_service/internal/models"
 	"github.com/Masterminds/squirrel"
 	"github.com/pkg/errors"
 )
 
-func (storage *PGstorage) GetMealsByUserId(ctx context.Context, id uint64) ([]*sharedmodels.MealInfo, error) {
+func (storage *PGstorage) GetMealsByUserId(ctx context.Context, id uint64) ([]*models.MealInfo, error) {
 	query := storage.getMealsQuery(id)
 	queryText, args, err := query.ToSql()
 	if err != nil {
@@ -20,9 +20,9 @@ func (storage *PGstorage) GetMealsByUserId(ctx context.Context, id uint64) ([]*s
 	}
 	defer rows.Close()
 
-	var meals []*sharedmodels.MealInfo
+	var meals []*models.MealInfo
 	for rows.Next() {
-		var m sharedmodels.MealInfo
+		var m models.MealInfo
 		if err := rows.Scan(
 			&m.ID,
 			&m.UserId,

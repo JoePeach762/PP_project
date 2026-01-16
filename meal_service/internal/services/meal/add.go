@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/JoePeach762/PP_project/meal_service/internal/models"
-	sharedmodels "github.com/JoePeach762/PP_project/shared/models"
 )
 
 func (s *Service) Add(ctx context.Context, req *models.MealInput) error {
@@ -22,7 +21,7 @@ func (s *Service) Add(ctx context.Context, req *models.MealInput) error {
 		s.cache.AddProduct(ctx, template)
 	}
 
-	info := &sharedmodels.MealInfo{
+	info := &models.MealInfo{
 		Name:         req.Name,
 		UserId:       req.UserID,
 		WeightGrams:  req.WeightGrams,

@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/JoePeach762/PP_project/config"
+	"github.com/JoePeach762/PP_project/user_service/config"
 	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
 func LoadConfig(path string) (*config.Config, error) {
-	_ = godotenv.Load() // .env для локальной разработки
+	_ = godotenv.Load()
 
 	viper.SetConfigFile(path)
 	viper.SetConfigType("yaml")

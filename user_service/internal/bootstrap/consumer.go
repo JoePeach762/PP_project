@@ -1,9 +1,9 @@
 package bootstrap
 
 import (
-	"github.com/JoePeach762/PP_project/config"
-	userconsumer "github.com/JoePeach762/PP_project/internal/consumer/user"
-	userprocessor "github.com/JoePeach762/PP_project/internal/services/processors/user"
+	"github.com/JoePeach762/PP_project/user_service/config"
+	userconsumer "github.com/JoePeach762/PP_project/user_service/internal/consumer/user"
+	userprocessor "github.com/JoePeach762/PP_project/user_service/internal/processors/user"
 )
 
 func InitUserConsumer(cfg *config.Config, processor *userprocessor.Processor) *userconsumer.Consumer {

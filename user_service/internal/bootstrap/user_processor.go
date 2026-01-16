@@ -3,8 +3,8 @@ package bootstrap
 import (
 	"context"
 
-	userprocessor "github.com/JoePeach762/PP_project/internal/services/processors/user"
-	"github.com/JoePeach762/PP_project/internal/services/user"
+	userprocessor "github.com/JoePeach762/PP_project/user_service/internal/processors/user"
+	"github.com/JoePeach762/PP_project/user_service/internal/services/user"
 )
 
 func InitUserProcessor(userService *user.Service) *userprocessor.Processor {
