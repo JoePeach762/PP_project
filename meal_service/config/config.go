@@ -39,11 +39,8 @@ type RedisConfig struct {
 }
 
 type KafkaConfig struct {
-	Brokers []string `mapstructure:"brokers"` // ["localhost:9092"]
-	Topics  struct {
-		UserEvents   string `mapstructure:"user_events"`
-		MealConsumed string `mapstructure:"meal_consumed"`
-	} `mapstructure:"topics"`
+	Brokers               []string `mapstructure:"brokers"` // ["localhost:9092"]
+	MealConsumedTopicName string   `mapstructure:"meal_consumed_topic_name"`
 }
 
 type MealServiceSettings struct {

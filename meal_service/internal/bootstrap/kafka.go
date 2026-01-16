@@ -9,7 +9,7 @@ import (
 func InitKafkaProducer(cfg *config.Config) *mealproducer.MealKafkaProducer {
 	writer := &kafka.Writer{
 		Addr:     kafka.TCP(cfg.Kafka.Brokers...),
-		Topic:    cfg.Kafka.Topics.MealConsumed,
+		Topic:    cfg.Kafka.MealConsumedTopicName,
 		Balancer: &kafka.LeastBytes{},
 	}
 	return mealproducer.NewKafkaProducer(writer)

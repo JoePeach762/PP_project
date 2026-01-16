@@ -10,52 +10,74 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-type MealConsumedEvent struct {
-	UserID       uint64    `json:"user_id"`
-	Name         string    `json:"name"`
-	WeightGrams  float32   `json:"weight_grams"`
-	Calories100g float32   `json:"calories_100g"`
-	Proteins100g float32   `json:"proteins_100g"`
-	Fats100g     float32   `json:"fats_100g"`
-	Carbs100g    float32   `json:"carbs_100g"`
-	Date         time.Time `json:"date"`
-}
-
 func (c *Consumer) Consume(ctx context.Context) {
+	slog.Info("Starting Kafka consumer", "topic", c.topic, "group_id", "user-service-consumer")
+
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:           c.kafka,
-		GroupID:           "UserService_group",
+		GroupID:           "user-service-consumer",
 		Topic:             c.topic,
+		MinBytes:          1,
+		MaxBytes:          10e6,
 		HeartbeatInterval: 3 * time.Second,
 		SessionTimeout:    30 * time.Second,
+		RebalanceTimeout:  10 * time.Second,
 	})
-	defer r.Close()
+	defer func() {
+		if err := r.Close(); err != nil {
+			slog.Error("Failed to close Kafka reader", "error", err)
+		}
+	}()
 
 	for {
-		msg, err := r.ReadMessage(ctx)
-		if err != nil {
-			slog.Error("consumer.consume error", "error", err.Error())
+		select {
+		case <-ctx.Done():
+			slog.Info("Kafka consumer stopped")
+			return
+		default:
 		}
-		var event MealConsumedEvent
-		if err := json.Unmarshal(msg.Value, &event); err != nil {
-			slog.Error("parse event", "error", err)
+
+		msg, err := r.ReadMessage(ctx)
+
+		if err != nil {
+			if err == context.Canceled || err == context.DeadlineExceeded {
+				continue
+			}
+
+			slog.Error("Failed to read Kafka message", "error", err)
+
+			time.Sleep(1 * time.Second)
 			continue
 		}
 
-		mealInfo := &models.MealInfo{
-			Name:         event.Name,
-			WeightGrams:  event.WeightGrams,
-			Calories100g: event.Calories100g,
-			Proteins100g: event.Proteins100g,
-			Fats100g:     event.Fats100g,
-			Carbs100g:    event.Carbs100g,
-			Date:         event.Date,
+		var event models.MealInfo
+		if err := json.Unmarshal(msg.Value, &event); err != nil {
+			slog.Error("Failed to parse Kafka message",
+				"error", err,
+				"message_offset", msg.Offset,
+				"message_partition", msg.Partition)
+			continue
 		}
 
-		if err := c.processor.AddMealToUser(ctx, mealInfo); err != nil {
-			slog.Error("AddMealToUser", "error", err)
-			// TODO: повторный вызов или отправка в DLQ
+		if event.UserId == 0 {
+			slog.Warn("Received meal event with missing UserID",
+				"message_offset", msg.Offset,
+				"meal_name", event.Name)
+			continue
 		}
+
+		if err := c.processor.AddMealToUser(ctx, &event); err != nil {
+			slog.Error("Failed to process meal event",
+				"error", err,
+				"user_id", event.UserId,
+				"meal_name", event.Name,
+				"message_offset", msg.Offset)
+			continue
+		}
+
+		slog.Debug("Successfully processed meal event",
+			"user_id", event.UserId,
+			"meal_name", event.Name,
+			"calories", event.Calories100g*event.WeightGrams/100)
 	}
-
 }

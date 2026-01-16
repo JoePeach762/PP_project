@@ -8,14 +8,9 @@ database:
   name: users_db
   ssl_mode: disable
 
-redis:
-  addr: redis:6379
-  password: ""
-  db: 0
-
 kafka:
   brokers:
-    - kafka:9092
+    - kafka:9094
   meal_consumed_topic_name: "meal.consumed"
 
 user_service:

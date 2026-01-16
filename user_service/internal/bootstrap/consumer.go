@@ -7,7 +7,5 @@ import (
 )
 
 func InitUserConsumer(cfg *config.Config, processor *userprocessor.Processor) *userconsumer.Consumer {
-	brokers := cfg.Kafka.Brokers
-
-	return userconsumer.NewUserConsumer(processor, brokers, cfg.Kafka.Topics.MealConsumed)
+	return userconsumer.NewUserConsumer(processor, cfg.Kafka.Brokers, cfg.Kafka.MealConsumedTopicName)
 }

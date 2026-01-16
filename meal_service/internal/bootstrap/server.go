@@ -89,7 +89,7 @@ func (s *Server) runGatewayServer(ctx context.Context, httpAddr, grpcAddr string
 
 	swaggerPath := os.Getenv("SWAGGER_PATH")
 	if swaggerPath == "" {
-		swaggerPath = "./internal/pb/swagger/users_api/users.swagger.json"
+		swaggerPath = "./internal/pb/swagger/meals_api/meals.swagger.json"
 	}
 
 	r.Get("/swagger.json", func(w http.ResponseWriter, r *http.Request) {

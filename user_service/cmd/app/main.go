@@ -17,7 +17,7 @@ func main() {
 
 	cfg, err := config.LoadConfig(os.Getenv("CONFIG_PATH"))
 	if err != nil {
-
+		config.LoadConfig(configPath)
 	}
 
 	pgStorage, err := bootstrap.InitPGStorage(cfg)
