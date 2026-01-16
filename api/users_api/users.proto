@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package users.service.v1;
 
-import "models/user_model.proto";
+import "models/user_models/user_model.proto";
 import "google/api/annotations.proto";
 
-option go_package = "github.com/JoePeach762/PP_project/internal/pb/users_api";
+option go_package = "github.com/JoePeach762/PP_project/user_service/internal/pb/users_api";
 
 service UserService {
   rpc CreateUsers(CreateUsersRequest) returns (CreateUsersResponse) {

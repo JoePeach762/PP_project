@@ -2,11 +2,11 @@ syntax = "proto3";
 
 package meals.service.v1;
 
-import "models/meal_model.proto";
+import "models/meal_models/meal_model.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
-option go_package = "github.com/JoePeach762/PP_project/internal/pb/meals_api";
+option go_package = "github.com/JoePeach762/PP_project/meal_service/internal/pb/meals_api";
 
 service MealService {
   rpc AddMeal(AddMealRequest) returns (google.protobuf.Empty) {

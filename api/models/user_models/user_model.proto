@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package users.models.v1;
+
+option go_package = "github.com/JoePeach762/PP_project/user_service/internal/pb/models/user_models";
+
+message UserInfo {
+  uint64 id = 1;
+  string name = 2;
+  string email = 3;
+  string sex = 4;
+  uint32 age = 5;
+  uint32 height_cm = 6;
+  uint32 weight_kg = 7;
+  uint32 target_weight_kg = 8;
+  uint32 current_calories = 9;
+  uint32 current_proteins = 10;
+  uint32 current_fats = 11;
+  uint32 current_carbs = 12;
+  uint32 target_calories = 13;
+  uint32 target_proteins = 14;
+  uint32 target_fats = 15;
+  uint32 target_carbs = 16;
+}

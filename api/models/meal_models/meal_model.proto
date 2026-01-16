@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package meals.models.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/JoePeach762/PP_project/meal_service/internal/pb/models/meal_models";
+
+message MealInfo {
+  uint64 id = 1;
+  uint64 user_id = 2;
+  string name = 3;
+  float weight_grams = 4;
+  float calories_100g = 5;
+  float proteins_100g = 6;
+  float fats_100g = 7;
+  float carbs_100g = 8;
+  google.protobuf.Timestamp date = 9;
+}

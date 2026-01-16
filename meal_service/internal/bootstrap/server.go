@@ -1,0 +1,125 @@
+package bootstrap
+
+import (
+	"context"
+	"fmt"
+	"log/slog"
+	"net"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/JoePeach762/PP_project/meal_service/internal/services/meal"
+
+	"github.com/JoePeach762/PP_project/meal_service/internal/pb/meals_api"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
+	httpSwagger "github.com/swaggo/http-swagger"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+)
+
+type Server struct {
+	grpcServer *grpc.Server
+	httpServer *http.Server
+}
+
+func NewServer() *Server {
+	return &Server{}
+}
+
+func (s *Server) AppRun(
+	mealGRPC *meal.GRPCServer,
+) error {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	grpcAddr := ":50051"
+	go func() {
+		if err := s.runGRPCServer(grpcAddr, mealGRPC); err != nil {
+			slog.Error("gRPC server failed", "error", err)
+			cancel()
+		}
+	}()
+
+	time.Sleep(100 * time.Millisecond)
+
+	httpAddr := ":8080"
+	if err := s.runGatewayServer(ctx, httpAddr, grpcAddr); err != nil {
+		return fmt.Errorf("gateway server failed: %w", err)
+	}
+
+	<-sigChan
+	slog.Info("Shutting down...")
+
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer shutdownCancel()
+
+	if s.httpServer != nil {
+		s.httpServer.Shutdown(shutdownCtx)
+	}
+	if s.grpcServer != nil {
+		s.grpcServer.GracefulStop()
+	}
+
+	return nil
+}
+
+func (s *Server) runGRPCServer(addr string, mealGRPC *meal.GRPCServer) error {
+	lis, err := net.Listen("tcp", addr)
+	if err != nil {
+		return fmt.Errorf("failed to listen: %w", err)
+	}
+
+	s.grpcServer = grpc.NewServer()
+	meals_api.RegisterMealServiceServer(s.grpcServer, mealGRPC)
+
+	slog.Info("gRPC server listening", "addr", addr)
+	return s.grpcServer.Serve(lis)
+}
+
+func (s *Server) runGatewayServer(ctx context.Context, httpAddr, grpcAddr string) error {
+	r := chi.NewRouter()
+
+	swaggerPath := os.Getenv("SWAGGER_PATH")
+	if swaggerPath == "" {
+		swaggerPath = "./internal/pb/swagger/users_api/users.swagger.json"
+	}
+
+	r.Get("/swagger.json", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, swaggerPath)
+	})
+	r.Get("/docs/*", httpSwagger.Handler(
+		httpSwagger.URL("/swagger.json"),
+	))
+
+	mux := runtime.NewServeMux()
+	opts := []grpc.DialOption{
+		grpc.WithTransportCredentials(insecure.NewCredentials()),
+	}
+
+	if err := meals_api.RegisterMealServiceHandlerFromEndpoint(ctx, mux, grpcAddr, opts); err != nil {
+		return fmt.Errorf("failed to register meal service: %w", err)
+	}
+
+	r.Mount("/", mux)
+
+	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		w.Write([]byte("OK"))
+	})
+
+	s.httpServer = &http.Server{
+		Addr:    httpAddr,
+		Handler: r,
+	}
+
+	slog.Info("HTTP/gRPC-Gateway server listening", "addr", httpAddr)
+	return s.httpServer.ListenAndServe()
+}
