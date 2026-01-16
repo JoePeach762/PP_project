@@ -12,11 +12,9 @@ type Config struct {
 	HTTPPort int `mapstructure:"http_port"`
 
 	Database DatabaseConfig `mapstructure:"database"`
-	Redis    RedisConfig    `mapstructure:"redis"`
 	Kafka    KafkaConfig    `mapstructure:"kafka"`
 
 	UserServiceSettings UserServiceSettings `mapstructure:"user_service"`
-	MealServiceSettings MealServiceSettings `mapstructure:"meal_service"`
 }
 
 type DatabaseConfig struct {
@@ -33,12 +31,6 @@ func (d *DatabaseConfig) ConnString() string {
 		d.Username, d.Password, d.Host, d.Port, d.DBName, d.SSLMode)
 }
 
-type RedisConfig struct {
-	Addr     string `mapstructure:"addr"`     // localhost:6379
-	Password string `mapstructure:"password"` // обычно пусто
-	DB       int    `mapstructure:"db"`
-}
-
 type KafkaConfig struct {
 	Brokers []string `mapstructure:"brokers"` // ["localhost:9092"]
 	Topics  struct {
@@ -52,13 +44,6 @@ type UserServiceSettings struct {
 	MaxNameLen uint8 `mapstructure:"max_name_len"`
 	MinWeight  uint8 `mapstructure:"min_weight"`
 	MaxWeight  uint8 `mapstructure:"max_weight"`
-}
-
-type MealServiceSettings struct {
-	MinNameLen     uint32 `mapstructure:"min_name_len"`
-	MaxNameLen     uint32 `mapstructure:"max_name_len"`
-	MaxWeightGrams uint32 `mapstructure:"max_weight_grams"`
-	OFFUserAgent   string `mapstructure:"off_user_agent"`
 }
 
 func LoadConfig(configPath string) (*Config, error) {

@@ -22,4 +22,4 @@ meal_service:
   min_name_len: 1
   max_name_len: 255
   max_weight_grams: 5000
-  off_user_agent: "PP_NutritionApp/1.0 (your@email.com)"
+  off_user_agent: "StudyProject/1.0 (efartem04@gmail.com)"

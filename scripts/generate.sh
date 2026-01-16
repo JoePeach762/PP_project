@@ -2,7 +2,6 @@
 
 cd "$(dirname "$0")/.." || exit
 
-# Очистка
 rm -rf ./user_service/internal/pb/models/*.pb.go
 rm -rf ./meal_service/internal/pb/models/*.pb.go
 rm -rf ./user_service/internal/pb/users_api/*.pb.go ./user_service/internal/pb/users_api/*.pb.gw.go
@@ -17,19 +16,16 @@ mkdir -p ./user_service/internal/pb/swagger/users_api ./meal_service/internal/pb
 
 PROTO_ROOT="./api"
 
-# === Генерация моделей users ===
 protoc \
   -I "$PROTO_ROOT" \
   --go_out=./user_service/internal/pb --go_opt=paths=source_relative \
   "$PROTO_ROOT/models/user_models/*.proto"
 
-# === Генерация моделей meals ===
 protoc \
   -I "$PROTO_ROOT" \
   --go_out=./meal_service/internal/pb --go_opt=paths=source_relative \
   "$PROTO_ROOT/models/meal_models/*.proto"
 
-# === Генерация Users API ===
 protoc \
   -I "$PROTO_ROOT" \
   -I "$PROTO_ROOT/google/api" \
@@ -39,7 +35,6 @@ protoc \
   --openapiv2_out=./user_service/internal/pb/swagger --openapiv2_opt=logtostderr=true \
   "$PROTO_ROOT/users_api/users.proto"
 
-# === Генерация Meals API ===
 protoc \
   -I "$PROTO_ROOT" \
   -I "$PROTO_ROOT/google/api" \

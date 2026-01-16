@@ -15,7 +15,6 @@ type Config struct {
 	Redis    RedisConfig    `mapstructure:"redis"`
 	Kafka    KafkaConfig    `mapstructure:"kafka"`
 
-	UserServiceSettings UserServiceSettings `mapstructure:"user_service"`
 	MealServiceSettings MealServiceSettings `mapstructure:"meal_service"`
 }
 
@@ -45,13 +44,6 @@ type KafkaConfig struct {
 		UserEvents   string `mapstructure:"user_events"`
 		MealConsumed string `mapstructure:"meal_consumed"`
 	} `mapstructure:"topics"`
-}
-
-type UserServiceSettings struct {
-	MinNameLen uint8 `mapstructure:"min_name_len"`
-	MaxNameLen uint8 `mapstructure:"max_name_len"`
-	MinWeight  uint8 `mapstructure:"min_weight"`
-	MaxWeight  uint8 `mapstructure:"max_weight"`
 }
 
 type MealServiceSettings struct {
