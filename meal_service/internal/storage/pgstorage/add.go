@@ -22,23 +22,9 @@ func (storage *PGstorage) AddMeal(ctx context.Context, info *models.MealInfo) er
 	return err
 }
 
-func (storage *PGstorage) AddMeals(ctx context.Context, infos []*models.MealInfo) error {
-	query := storage.addMealsQuery(infos)
-	queryText, args, err := query.ToSql()
-	if err != nil {
-		return errors.Wrap(err, "generate !meals! query error")
-	}
-	_, err = storage.db.Exec(ctx, queryText, args...)
-	if err != nil {
-		err = errors.Wrap(err, "exeс !meals! query error")
-	}
-	return err
-}
-
 func (storage *PGstorage) addMealsQuery(mealInfos []*models.MealInfo) squirrel.Sqlizer {
 	infos := lo.Map(mealInfos, func(info *models.MealInfo, _ int) *MealInfo {
 		return &MealInfo{
-			ID:           info.ID,
 			UserId:       info.UserId,
 			Name:         info.Name,
 			WeightGrams:  info.WeightGrams,
@@ -53,7 +39,6 @@ func (storage *PGstorage) addMealsQuery(mealInfos []*models.MealInfo) squirrel.S
 	q := squirrel.
 		Insert(mealTableName).
 		Columns(
-			mealIDColumnName,
 			mealUserIDcolumnName,
 			mealNameColumnName,
 			mealWeightGramsColumnName,
@@ -66,7 +51,6 @@ func (storage *PGstorage) addMealsQuery(mealInfos []*models.MealInfo) squirrel.S
 		PlaceholderFormat(squirrel.Dollar)
 	for _, info := range infos {
 		q = q.Values(
-			info.ID,
 			info.UserId,
 			info.Name,
 			info.WeightGrams,

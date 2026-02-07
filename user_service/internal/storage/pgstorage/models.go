@@ -53,16 +53,3 @@ const (
 	userTargetFatsColumnName      = "target_fats"
 	userTargetCarbsColumnName     = "target_carbs"
 )
-
-const (
-	mealTableName              = "meal_info"
-	mealIDColumnName           = "id"
-	mealUserIDcolumnName       = "user_id"
-	mealNameColumnName         = "name"
-	mealWeightGramsColumnName  = "weight_grams"
-	mealCalories100gColumnName = "calories_100g"
-	mealProteins100gColumnName = "proteins_100g"
-	mealFats100gColumnName     = "fats_100g"
-	mealCarbs100gColumnName    = "carbs_100g"
-	mealDateColumnName         = "date"
-)

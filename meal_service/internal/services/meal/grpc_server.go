@@ -56,3 +56,10 @@ func (s *GRPCServer) GetMeals(ctx context.Context, req *meals_api.GetMealsReques
 
 	return &meals_api.GetMealsResponse{Meals: pbMeals}, nil
 }
+
+func (s *GRPCServer) DeleteMeals(ctx context.Context, req *meals_api.DeleteMealsRequest) (*meals_api.DeleteMealsResponse, error) {
+	if err := s.service.DeleteByIds(ctx, req.Ids); err != nil {
+		return nil, err
+	}
+	return &meals_api.DeleteMealsResponse{}, nil
+}

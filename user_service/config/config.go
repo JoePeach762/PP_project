@@ -32,7 +32,7 @@ func (d *DatabaseConfig) ConnString() string {
 }
 
 type KafkaConfig struct {
-	Brokers               []string `mapstructure:"brokers"` // ["localhost:9092"]
+	Brokers               []string `mapstructure:"brokers"`
 	MealConsumedTopicName string   `mapstructure:"meal_consumed_topic_name"`
 }
 

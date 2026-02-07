@@ -172,6 +172,86 @@ func (x *GetMealsResponse) GetMeals() []*meal_models.MealInfo {
 	return nil
 }
 
+type DeleteMealsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ids           []uint64               `protobuf:"varint,1,rep,packed,name=ids,proto3" json:"ids,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteMealsRequest) Reset() {
+	*x = DeleteMealsRequest{}
+	mi := &file_meals_api_meals_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteMealsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteMealsRequest) ProtoMessage() {}
+
+func (x *DeleteMealsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_meals_api_meals_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteMealsRequest.ProtoReflect.Descriptor instead.
+func (*DeleteMealsRequest) Descriptor() ([]byte, []int) {
+	return file_meals_api_meals_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *DeleteMealsRequest) GetIds() []uint64 {
+	if x != nil {
+		return x.Ids
+	}
+	return nil
+}
+
+type DeleteMealsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *DeleteMealsResponse) Reset() {
+	*x = DeleteMealsResponse{}
+	mi := &file_meals_api_meals_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *DeleteMealsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*DeleteMealsResponse) ProtoMessage() {}
+
+func (x *DeleteMealsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_meals_api_meals_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use DeleteMealsResponse.ProtoReflect.Descriptor instead.
+func (*DeleteMealsResponse) Descriptor() ([]byte, []int) {
+	return file_meals_api_meals_proto_rawDescGZIP(), []int{4}
+}
+
 var File_meals_api_meals_proto protoreflect.FileDescriptor
 
 const file_meals_api_meals_proto_rawDesc = "" +
@@ -184,10 +264,14 @@ const file_meals_api_meals_proto_rawDesc = "" +
 	"\x0fGetMealsRequest\x12\x17\n" +
 	"\auser_id\x18\x01 \x01(\x04R\x06userId\"C\n" +
 	"\x10GetMealsResponse\x12/\n" +
-	"\x05meals\x18\x01 \x03(\v2\x19.meals.models.v1.MealInfoR\x05meals2\xce\x01\n" +
+	"\x05meals\x18\x01 \x03(\v2\x19.meals.models.v1.MealInfoR\x05meals\"&\n" +
+	"\x12DeleteMealsRequest\x12\x10\n" +
+	"\x03ids\x18\x01 \x03(\x04R\x03ids\"\x15\n" +
+	"\x13DeleteMealsResponse2\xc3\x02\n" +
 	"\vMealService\x12Y\n" +
 	"\aAddMeal\x12 .meals.service.v1.AddMealRequest\x1a\x16.google.protobuf.Empty\"\x14\x82\xd3\xe4\x93\x02\x0e:\x01*\"\t/v1/meals\x12d\n" +
-	"\bGetMeals\x12!.meals.service.v1.GetMealsRequest\x1a\".meals.service.v1.GetMealsResponse\"\x11\x82\xd3\xe4\x93\x02\v\x12\t/v1/mealsBFZDgithub.com/JoePeach762/PP_project/meal_service/internal/pb/meals_apib\x06proto3"
+	"\bGetMeals\x12!.meals.service.v1.GetMealsRequest\x1a\".meals.service.v1.GetMealsResponse\"\x11\x82\xd3\xe4\x93\x02\v\x12\t/v1/meals\x12s\n" +
+	"\vDeleteMeals\x12$.meals.service.v1.DeleteMealsRequest\x1a%.meals.service.v1.DeleteMealsResponse\"\x17\x82\xd3\xe4\x93\x02\x11*\x0f/v1/meals/{ids}BFZDgithub.com/JoePeach762/PP_project/meal_service/internal/pb/meals_apib\x06proto3"
 
 var (
 	file_meals_api_meals_proto_rawDescOnce sync.Once
@@ -201,22 +285,26 @@ func file_meals_api_meals_proto_rawDescGZIP() []byte {
 	return file_meals_api_meals_proto_rawDescData
 }
 
-var file_meals_api_meals_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_meals_api_meals_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_meals_api_meals_proto_goTypes = []any{
 	(*AddMealRequest)(nil),       // 0: meals.service.v1.AddMealRequest
 	(*GetMealsRequest)(nil),      // 1: meals.service.v1.GetMealsRequest
 	(*GetMealsResponse)(nil),     // 2: meals.service.v1.GetMealsResponse
-	(*meal_models.MealInfo)(nil), // 3: meals.models.v1.MealInfo
-	(*emptypb.Empty)(nil),        // 4: google.protobuf.Empty
+	(*DeleteMealsRequest)(nil),   // 3: meals.service.v1.DeleteMealsRequest
+	(*DeleteMealsResponse)(nil),  // 4: meals.service.v1.DeleteMealsResponse
+	(*meal_models.MealInfo)(nil), // 5: meals.models.v1.MealInfo
+	(*emptypb.Empty)(nil),        // 6: google.protobuf.Empty
 }
 var file_meals_api_meals_proto_depIdxs = []int32{
-	3, // 0: meals.service.v1.GetMealsResponse.meals:type_name -> meals.models.v1.MealInfo
+	5, // 0: meals.service.v1.GetMealsResponse.meals:type_name -> meals.models.v1.MealInfo
 	0, // 1: meals.service.v1.MealService.AddMeal:input_type -> meals.service.v1.AddMealRequest
 	1, // 2: meals.service.v1.MealService.GetMeals:input_type -> meals.service.v1.GetMealsRequest
-	4, // 3: meals.service.v1.MealService.AddMeal:output_type -> google.protobuf.Empty
-	2, // 4: meals.service.v1.MealService.GetMeals:output_type -> meals.service.v1.GetMealsResponse
-	3, // [3:5] is the sub-list for method output_type
-	1, // [1:3] is the sub-list for method input_type
+	3, // 3: meals.service.v1.MealService.DeleteMeals:input_type -> meals.service.v1.DeleteMealsRequest
+	6, // 4: meals.service.v1.MealService.AddMeal:output_type -> google.protobuf.Empty
+	2, // 5: meals.service.v1.MealService.GetMeals:output_type -> meals.service.v1.GetMealsResponse
+	4, // 6: meals.service.v1.MealService.DeleteMeals:output_type -> meals.service.v1.DeleteMealsResponse
+	4, // [4:7] is the sub-list for method output_type
+	1, // [1:4] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
 	1, // [1:1] is the sub-list for extension extendee
 	0, // [0:1] is the sub-list for field type_name
@@ -233,7 +321,7 @@ func file_meals_api_meals_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_meals_api_meals_proto_rawDesc), len(file_meals_api_meals_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

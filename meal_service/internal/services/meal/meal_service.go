@@ -17,6 +17,7 @@ type producer interface {
 type storage interface {
 	AddMeal(ctx context.Context, info *models.MealInfo) error
 	GetMealsByUserId(ctx context.Context, id uint64) ([]*models.MealInfo, error)
+	DeleteMeals(ctx context.Context, ids []uint64) error
 }
 
 type cache interface {

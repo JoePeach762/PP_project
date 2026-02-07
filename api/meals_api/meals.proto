@@ -21,6 +21,12 @@ service MealService {
       get: "/v1/meals"
     };
   }
+
+  rpc DeleteMeals(DeleteMealsRequest) returns (DeleteMealsResponse) {
+    option (google.api.http) = {
+      delete: "/v1/meals/{ids}"
+    };
+  }
 }
 
 message AddMealRequest {
@@ -36,3 +42,9 @@ message GetMealsRequest {
 message GetMealsResponse {
   repeated meals.models.v1.MealInfo meals = 1;
 }
+
+message DeleteMealsRequest {
+  repeated uint64 ids = 1;
+}
+
+message DeleteMealsResponse {}

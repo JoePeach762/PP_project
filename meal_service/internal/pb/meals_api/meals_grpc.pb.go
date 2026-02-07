@@ -20,8 +20,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MealService_AddMeal_FullMethodName  = "/meals.service.v1.MealService/AddMeal"
-	MealService_GetMeals_FullMethodName = "/meals.service.v1.MealService/GetMeals"
+	MealService_AddMeal_FullMethodName     = "/meals.service.v1.MealService/AddMeal"
+	MealService_GetMeals_FullMethodName    = "/meals.service.v1.MealService/GetMeals"
+	MealService_DeleteMeals_FullMethodName = "/meals.service.v1.MealService/DeleteMeals"
 )
 
 // MealServiceClient is the client API for MealService service.
@@ -30,6 +31,7 @@ const (
 type MealServiceClient interface {
 	AddMeal(ctx context.Context, in *AddMealRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetMeals(ctx context.Context, in *GetMealsRequest, opts ...grpc.CallOption) (*GetMealsResponse, error)
+	DeleteMeals(ctx context.Context, in *DeleteMealsRequest, opts ...grpc.CallOption) (*DeleteMealsResponse, error)
 }
 
 type mealServiceClient struct {
@@ -60,12 +62,23 @@ func (c *mealServiceClient) GetMeals(ctx context.Context, in *GetMealsRequest, o
 	return out, nil
 }
 
+func (c *mealServiceClient) DeleteMeals(ctx context.Context, in *DeleteMealsRequest, opts ...grpc.CallOption) (*DeleteMealsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteMealsResponse)
+	err := c.cc.Invoke(ctx, MealService_DeleteMeals_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MealServiceServer is the server API for MealService service.
 // All implementations must embed UnimplementedMealServiceServer
 // for forward compatibility.
 type MealServiceServer interface {
 	AddMeal(context.Context, *AddMealRequest) (*emptypb.Empty, error)
 	GetMeals(context.Context, *GetMealsRequest) (*GetMealsResponse, error)
+	DeleteMeals(context.Context, *DeleteMealsRequest) (*DeleteMealsResponse, error)
 	mustEmbedUnimplementedMealServiceServer()
 }
 
@@ -81,6 +94,9 @@ func (UnimplementedMealServiceServer) AddMeal(context.Context, *AddMealRequest) 
 }
 func (UnimplementedMealServiceServer) GetMeals(context.Context, *GetMealsRequest) (*GetMealsResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetMeals not implemented")
+}
+func (UnimplementedMealServiceServer) DeleteMeals(context.Context, *DeleteMealsRequest) (*DeleteMealsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method DeleteMeals not implemented")
 }
 func (UnimplementedMealServiceServer) mustEmbedUnimplementedMealServiceServer() {}
 func (UnimplementedMealServiceServer) testEmbeddedByValue()                     {}
@@ -139,6 +155,24 @@ func _MealService_GetMeals_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MealService_DeleteMeals_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMealsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MealServiceServer).DeleteMeals(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MealService_DeleteMeals_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MealServiceServer).DeleteMeals(ctx, req.(*DeleteMealsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MealService_ServiceDesc is the grpc.ServiceDesc for MealService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -153,6 +187,10 @@ var MealService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetMeals",
 			Handler:    _MealService_GetMeals_Handler,
+		},
+		{
+			MethodName: "DeleteMeals",
+			Handler:    _MealService_DeleteMeals_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

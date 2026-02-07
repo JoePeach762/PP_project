@@ -77,6 +77,42 @@
           "MealService"
         ]
       }
+    },
+    "/v1/meals/{ids}": {
+      "delete": {
+        "operationId": "MealService_DeleteMeals",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/v1DeleteMealsResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "path",
+            "required": true,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uint64"
+            },
+            "collectionFormat": "csv",
+            "minItems": 1
+          }
+        ],
+        "tags": [
+          "MealService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -123,6 +159,9 @@
           "format": "uint64"
         }
       }
+    },
+    "v1DeleteMealsResponse": {
+      "type": "object"
     },
     "v1GetMealsResponse": {
       "type": "object",

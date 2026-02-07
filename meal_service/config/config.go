@@ -33,13 +33,13 @@ func (d *DatabaseConfig) ConnString() string {
 }
 
 type RedisConfig struct {
-	Addr     string `mapstructure:"addr"`     // localhost:6379
-	Password string `mapstructure:"password"` // обычно пусто
+	Addr     string `mapstructure:"addr"`
+	Password string `mapstructure:"password"`
 	DB       int    `mapstructure:"db"`
 }
 
 type KafkaConfig struct {
-	Brokers               []string `mapstructure:"brokers"` // ["localhost:9092"]
+	Brokers               []string `mapstructure:"brokers"`
 	MealConsumedTopicName string   `mapstructure:"meal_consumed_topic_name"`
 }
 
