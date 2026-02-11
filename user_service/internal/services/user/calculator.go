@@ -60,3 +60,5 @@ func (s *Service) calculateTargetsSingle(info *models.UserInfo) error {
 
 	return nil
 }
+
+//TODO: Пересчет калорий нужно привести к КИЛО калориям, а не просто калориям. Я считаю калории.

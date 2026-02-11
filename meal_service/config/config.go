@@ -2,9 +2,9 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
-	"github.com/joho/godotenv"
 	"github.com/spf13/viper"
 )
 
@@ -51,7 +51,6 @@ type MealServiceSettings struct {
 }
 
 func LoadConfig(configPath string) (*Config, error) {
-	_ = godotenv.Load()
 
 	viper.SetConfigFile(configPath)
 	viper.SetConfigType("yaml")
@@ -70,6 +69,14 @@ func LoadConfig(configPath string) (*Config, error) {
 	var cfg Config
 	if err := viper.Unmarshal(&cfg); err != nil {
 		return nil, fmt.Errorf("unable to decode config: %w", err)
+	}
+
+	if cfg.MealServiceSettings.OFFUserAgent == "" {
+		cfg.MealServiceSettings.OFFUserAgent = os.Getenv("OFF_USER_AGENT")
+	}
+
+	if cfg.MealServiceSettings.OFFUserAgent == "" {
+		return nil, fmt.Errorf("OFF_USER_AGENT is required but not set")
 	}
 
 	return &cfg, nil

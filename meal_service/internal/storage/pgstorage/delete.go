@@ -13,7 +13,7 @@ func (s *PGstorage) DeleteMeals(ctx context.Context, ids []uint64) error {
 	}
 
 	query := squirrel.Delete(mealTableName).
-		Where(squirrel.Eq{mealIDColumnName: ids}).
+		Where(squirrel.Eq{mealUserIDcolumnName: ids}).
 		PlaceholderFormat(squirrel.Dollar)
 
 	queryText, args, err := query.ToSql()

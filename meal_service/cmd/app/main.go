@@ -15,9 +15,9 @@ func main() {
 		configPath = "config.yaml"
 	}
 
-	cfg, err := config.LoadConfig(os.Getenv("CONFIG_PATH"))
+	cfg, err := config.LoadConfig(configPath)
 	if err != nil {
-		config.LoadConfig(configPath)
+		log.Fatalf("Failed to load config: %v", err)
 	}
 
 	pgStorage, err := bootstrap.InitPGStorage(cfg)

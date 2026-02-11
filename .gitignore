@@ -1,6 +1,7 @@
 # Local env
 .env
 .env.local
+**/.env
 
 # Binaries
 /bin/

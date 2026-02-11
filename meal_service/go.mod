@@ -3,7 +3,6 @@ module github.com/JoePeach762/PP_project/meal_service
 go 1.25.5
 
 require (
-	github.com/joho/godotenv v1.5.1
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/viper v1.21.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20251222181119-0a764e51fe1b
