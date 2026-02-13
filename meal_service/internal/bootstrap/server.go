@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	mealconsumer "github.com/JoePeach762/PP_project/meal_service/internal/consumer/meal"
 	"github.com/JoePeach762/PP_project/meal_service/internal/services/meal"
 
 	"github.com/JoePeach762/PP_project/meal_service/internal/pb/meals_api"
@@ -33,12 +34,15 @@ func NewServer() *Server {
 
 func (s *Server) AppRun(
 	mealGRPC *meal.GRPCServer,
+	mealConsumer *mealconsumer.Consumer,
 ) error {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
+
+	go mealConsumer.Consume(ctx)
 
 	grpcAddr := ":50051"
 	go func() {

@@ -14,12 +14,10 @@ func main() {
 	if configPath == "" {
 		configPath = "config.yaml"
 	}
-
 	cfg, err := config.LoadConfig(configPath)
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
-
 	pgStorage, err := bootstrap.InitPGStorage(cfg)
 	if err != nil {
 		log.Fatalf("Failed to load pgstorage: %v", err)
@@ -28,15 +26,14 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to load rediscache: %v", err)
 	}
-	kafkaProducer := bootstrap.InitKafkaProducer(cfg)
 	offClient := bootstrap.InitOFFClient(cfg)
-
+	kafkaProducer := bootstrap.InitKafkaProducer(cfg)
 	mealService := bootstrap.InitMealService(pgStorage, redisCache, kafkaProducer, offClient, cfg)
-
 	mealGRPC := meal.NewGRPCServer(mealService)
-
+	mealProcessor := bootstrap.InitMealProcessor(mealService)
+	mealConsumer := bootstrap.InitMealConsumer(cfg, mealProcessor)
 	server := bootstrap.NewServer()
-	if err := server.AppRun(mealGRPC); err != nil {
+	if err := server.AppRun(mealGRPC, mealConsumer); err != nil {
 		log.Fatalf("meal server failed: %v", err)
 	}
 }

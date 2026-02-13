@@ -9,7 +9,7 @@ import (
 	"github.com/JoePeach762/PP_project/user_service/internal/models"
 )
 
-func (s *Service) validateSingle(info *models.UserInfo) error {
+func (s *Service) validateSingle(info *models.UserInput) error {
 	if len(info.Name) <= int(s.minNameLength) || len(info.Name) >= int(s.maxNameLength) {
 		return errors.New("имя не должно быть пустым и не должно превышать 100 символов")
 	}
@@ -34,7 +34,7 @@ func (s *Service) validateSingle(info *models.UserInfo) error {
 	return nil
 }
 
-func (s *Service) Validate(infos []*models.UserInfo) error {
+func (s *Service) Validate(infos []*models.UserInput) error {
 	for _, info := range infos {
 		if err := s.validateSingle(info); err != nil {
 			return err

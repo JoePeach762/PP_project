@@ -106,13 +106,13 @@ func request_MealService_DeleteMeals_0(ctx context.Context, marshaler runtime.Ma
 	if req.Body != nil {
 		_, _ = io.Copy(io.Discard, req.Body)
 	}
-	val, ok := pathParams["ids"]
+	val, ok := pathParams["user_ids"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "ids")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_ids")
 	}
-	protoReq.Ids, err = runtime.Uint64Slice(val, ",")
+	protoReq.UserIds, err = runtime.Uint64Slice(val, ",")
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "ids", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_ids", err)
 	}
 	msg, err := client.DeleteMeals(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
@@ -124,13 +124,13 @@ func local_request_MealService_DeleteMeals_0(ctx context.Context, marshaler runt
 		metadata runtime.ServerMetadata
 		err      error
 	)
-	val, ok := pathParams["ids"]
+	val, ok := pathParams["user_ids"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "ids")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "user_ids")
 	}
-	protoReq.Ids, err = runtime.Uint64Slice(val, ",")
+	protoReq.UserIds, err = runtime.Uint64Slice(val, ",")
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "ids", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "user_ids", err)
 	}
 	msg, err := server.DeleteMeals(ctx, &protoReq)
 	return msg, metadata, err
@@ -188,7 +188,7 @@ func RegisterMealServiceHandlerServer(ctx context.Context, mux *runtime.ServeMux
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/meals.service.v1.MealService/DeleteMeals", runtime.WithHTTPPathPattern("/v1/meals/{ids}"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/meals.service.v1.MealService/DeleteMeals", runtime.WithHTTPPathPattern("/v1/meals/{user_ids}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -280,7 +280,7 @@ func RegisterMealServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/meals.service.v1.MealService/DeleteMeals", runtime.WithHTTPPathPattern("/v1/meals/{ids}"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/meals.service.v1.MealService/DeleteMeals", runtime.WithHTTPPathPattern("/v1/meals/{user_ids}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -299,7 +299,7 @@ func RegisterMealServiceHandlerClient(ctx context.Context, mux *runtime.ServeMux
 var (
 	pattern_MealService_AddMeal_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "meals"}, ""))
 	pattern_MealService_GetMeals_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "meals"}, ""))
-	pattern_MealService_DeleteMeals_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "meals", "ids"}, ""))
+	pattern_MealService_DeleteMeals_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 1, 5, 2}, []string{"v1", "meals", "user_ids"}, ""))
 )
 
 var (

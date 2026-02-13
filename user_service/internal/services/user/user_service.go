@@ -14,8 +14,13 @@ type storage interface {
 	AddMealToUser(ctx context.Context, mealInfo *models.MealInfo) error
 }
 
+type producer interface {
+	PublishUsersDeleted(ctx context.Context, ids []uint64) error
+}
+
 type Service struct {
 	storage       storage
+	producer      producer
 	minNameLength uint32
 	maxNameLength uint32
 	minWeight     uint32
@@ -24,6 +29,7 @@ type Service struct {
 
 func NewUserService(
 	storage storage,
+	producer producer,
 	minNameLength uint32,
 	maxNameLength uint32,
 	minWeight uint32,
@@ -31,6 +37,7 @@ func NewUserService(
 ) *Service {
 	return &Service{
 		storage:       storage,
+		producer:      producer,
 		minNameLength: minNameLength,
 		maxNameLength: maxNameLength,
 		minWeight:     minWeight,

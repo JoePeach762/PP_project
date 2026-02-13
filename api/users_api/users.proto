@@ -17,7 +17,7 @@ service UserService {
 
   rpc UpdateUser(UpdateUserRequest) returns (UpdateUserResponse) {
     option (google.api.http) = {
-      patch: "/v1/users/{user.id}"
+      patch: "/v1/users/{UserId}"
       body: "*"
     };
   }
@@ -36,13 +36,14 @@ service UserService {
 }
 
 message CreateUsersRequest {
-  repeated users.models.v1.UserInfo users = 1;
+  repeated users.models.v1.UserInput users = 1;
 }
 
 message CreateUsersResponse {}
 
 message UpdateUserRequest {
-  users.models.v1.UserInfo user = 1;
+  uint64 UserId = 1;
+  users.models.v1.UserInput user = 2;
 }
 
 message UpdateUserResponse {}

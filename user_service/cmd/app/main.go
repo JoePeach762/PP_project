@@ -14,26 +14,21 @@ func main() {
 	if configPath == "" {
 		configPath = "config.yaml"
 	}
-
-	cfg, err := config.LoadConfig(os.Getenv("CONFIG_PATH"))
+	cfg, err := config.LoadConfig(configPath)
 	if err != nil {
-		config.LoadConfig(configPath)
+		log.Fatalf("Failed to load config: %v", err)
 	}
-
 	pgStorage, err := bootstrap.InitPGStorage(cfg)
 	if err != nil {
 		log.Fatalf("Failed to load pgstorage: %v", err)
 	}
-
-	userService := bootstrap.InitUserService(pgStorage, cfg)
-
+	kafkaProducer := bootstrap.InitKafkaProducer(cfg)
+	userService := bootstrap.InitUserService(pgStorage, kafkaProducer, cfg)
 	userGRPC := user.NewGRPCServer(userService)
-
 	userProcessor := bootstrap.InitUserProcessor(userService)
 	userConsumer := bootstrap.InitUserConsumer(cfg, userProcessor)
-
 	server := bootstrap.NewServer()
 	if err := server.AppRun(userGRPC, userConsumer); err != nil {
-		log.Fatalf("Server failed: %v", err)
+		log.Fatalf("user server failed: %v", err)
 	}
 }

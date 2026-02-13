@@ -17,3 +17,9 @@ message MealInfo {
   float carbs_100g = 8;
   google.protobuf.Timestamp date = 9;
 }
+
+message MealInput {
+  uint64 user_id = 2;
+  string name = 3;
+  float weight_grams = 4;
+}

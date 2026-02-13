@@ -12,6 +12,7 @@ kafka:
   brokers:
     - kafka:9094
   meal_consumed_topic_name: "meal.consumed"
+  user_deleted_topic_name: "user.deleted"
 
 user_service:
   min_name_len: 1

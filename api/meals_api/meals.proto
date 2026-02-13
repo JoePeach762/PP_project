@@ -24,15 +24,13 @@ service MealService {
 
   rpc DeleteMeals(DeleteMealsRequest) returns (DeleteMealsResponse) {
     option (google.api.http) = {
-      delete: "/v1/meals/{ids}"
+      delete: "/v1/meals/{user_ids}"
     };
   }
 }
 
 message AddMealRequest {
-  string name = 1;
-  float weight_grams = 2;
-  uint64 user_id = 3;
+  meals.models.v1.MealInput meal = 1;
 }
 
 message GetMealsRequest {
@@ -44,7 +42,7 @@ message GetMealsResponse {
 }
 
 message DeleteMealsRequest {
-  repeated uint64 ids = 1;
+  repeated uint64 user_ids = 1;
 }
 
 message DeleteMealsResponse {}

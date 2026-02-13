@@ -2,13 +2,19 @@ package bootstrap
 
 import (
 	"github.com/JoePeach762/PP_project/user_service/config"
+	userproducer "github.com/JoePeach762/PP_project/user_service/internal/producer/user"
 	"github.com/JoePeach762/PP_project/user_service/internal/services/user"
 	"github.com/JoePeach762/PP_project/user_service/internal/storage/pgstorage"
 )
 
-func InitUserService(storage *pgstorage.PGstorage, cfg *config.Config) *user.Service {
+func InitUserService(
+	storage *pgstorage.PGstorage,
+	producer *userproducer.UserKafkaProducer,
+	cfg *config.Config,
+) *user.Service {
 	return user.NewUserService(
 		storage,
+		producer,
 		uint32(cfg.UserServiceSettings.MinNameLen),
 		uint32(cfg.UserServiceSettings.MaxNameLen),
 		uint32(cfg.UserServiceSettings.MinWeight),

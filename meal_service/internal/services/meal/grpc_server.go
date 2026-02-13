@@ -20,10 +20,11 @@ func NewGRPCServer(service *Service) *GRPCServer {
 }
 
 func (s *GRPCServer) AddMeal(ctx context.Context, req *meals_api.AddMealRequest) (*emptypb.Empty, error) {
+	m := req.Meal
 	mealInput := &models.MealInput{
-		UserID:      req.UserId,
-		Name:        req.Name,
-		WeightGrams: req.WeightGrams,
+		UserID:      m.UserId,
+		Name:        m.Name,
+		WeightGrams: m.WeightGrams,
 	}
 
 	if err := s.service.Add(ctx, mealInput); err != nil {
@@ -58,7 +59,7 @@ func (s *GRPCServer) GetMeals(ctx context.Context, req *meals_api.GetMealsReques
 }
 
 func (s *GRPCServer) DeleteMeals(ctx context.Context, req *meals_api.DeleteMealsRequest) (*meals_api.DeleteMealsResponse, error) {
-	if err := s.service.DeleteByIds(ctx, req.Ids); err != nil {
+	if err := s.service.DeleteByUserIds(ctx, req.UserIds); err != nil {
 		return nil, err
 	}
 	return &meals_api.DeleteMealsResponse{}, nil

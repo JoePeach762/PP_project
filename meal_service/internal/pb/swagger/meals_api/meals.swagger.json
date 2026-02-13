@@ -78,7 +78,7 @@
         ]
       }
     },
-    "/v1/meals/{ids}": {
+    "/v1/meals/{userIds}": {
       "delete": {
         "operationId": "MealService_DeleteMeals",
         "responses": {
@@ -97,7 +97,7 @@
         },
         "parameters": [
           {
-            "name": "ids",
+            "name": "userIds",
             "in": "path",
             "required": true,
             "type": "array",
@@ -147,16 +147,8 @@
     "v1AddMealRequest": {
       "type": "object",
       "properties": {
-        "name": {
-          "type": "string"
-        },
-        "weightGrams": {
-          "type": "number",
-          "format": "float"
-        },
-        "userId": {
-          "type": "string",
-          "format": "uint64"
+        "meal": {
+          "$ref": "#/definitions/v1MealInput"
         }
       }
     },
@@ -212,6 +204,22 @@
         "date": {
           "type": "string",
           "format": "date-time"
+        }
+      }
+    },
+    "v1MealInput": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "weightGrams": {
+          "type": "number",
+          "format": "float"
         }
       }
     }

@@ -5,5 +5,9 @@ import (
 )
 
 func (s *Service) DeleteByIds(ctx context.Context, ids []uint64) error {
-	return s.storage.DeleteUsers(ctx, ids)
+	err := s.storage.DeleteUsers(ctx, ids)
+	if err != nil {
+		return err
+	}
+	return s.producer.PublishUsersDeleted(ctx, ids)
 }

@@ -34,6 +34,7 @@ func (d *DatabaseConfig) ConnString() string {
 type KafkaConfig struct {
 	Brokers               []string `mapstructure:"brokers"`
 	MealConsumedTopicName string   `mapstructure:"meal_consumed_topic_name"`
+	UserDeletedTopicName  string   `mapstructure:"user_deleted_topic_name"`
 }
 
 type UserServiceSettings struct {

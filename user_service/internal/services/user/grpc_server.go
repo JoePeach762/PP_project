@@ -18,10 +18,9 @@ func NewGRPCServer(service *Service) *GRPCServer {
 }
 
 func (s *GRPCServer) CreateUsers(ctx context.Context, req *users_api.CreateUsersRequest) (*users_api.CreateUsersResponse, error) {
-	var users []*models.UserInfo
+	var users []*models.UserInput
 	for _, u := range req.Users {
-		users = append(users, &models.UserInfo{
-			ID:             u.Id,
+		users = append(users, &models.UserInput{
 			Name:           u.Name,
 			Email:          u.Email,
 			Sex:            u.Sex,
@@ -41,8 +40,7 @@ func (s *GRPCServer) CreateUsers(ctx context.Context, req *users_api.CreateUsers
 
 func (s *GRPCServer) UpdateUser(ctx context.Context, req *users_api.UpdateUserRequest) (*users_api.UpdateUserResponse, error) {
 	u := req.User
-	user := models.UserInfo{
-		ID:             u.Id,
+	user := models.UserInput{
 		Name:           u.Name,
 		Email:          u.Email,
 		Sex:            u.Sex,
@@ -52,7 +50,7 @@ func (s *GRPCServer) UpdateUser(ctx context.Context, req *users_api.UpdateUserRe
 		TargetWeightKg: uint32(u.TargetWeightKg),
 	}
 
-	if err := s.service.Update(ctx, u.Id, user); err != nil {
+	if err := s.service.Update(ctx, req.UserId, user); err != nil {
 		return nil, err
 	}
 

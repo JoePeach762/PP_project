@@ -22,3 +22,13 @@ message UserInfo {
   uint32 target_fats = 15;
   uint32 target_carbs = 16;
 }
+
+message UserInput {
+  string name = 2;
+  string email = 3;
+  string sex = 4;
+  uint32 age = 5;
+  uint32 height_cm = 6;
+  uint32 weight_kg = 7;
+  uint32 target_weight_kg = 8;
+}
