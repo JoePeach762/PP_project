@@ -10,6 +10,9 @@ import (
 
 func (c *RedisCache) AddProduct(ctx context.Context, info *models.MealTemplate) error {
 	key := "product:" + info.Name
-	data, _ := json.Marshal(info)
+	data, err := json.Marshal(info)
+	if err != nil {
+		return err
+	}
 	return c.client.Set(ctx, key, data, 72*time.Hour).Err()
 }

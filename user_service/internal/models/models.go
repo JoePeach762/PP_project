@@ -1,6 +1,9 @@
 package models
 
-import "time"
+import (
+	"strings"
+	"time"
+)
 
 type UserInput struct {
 	Name           string `json:"name"`
@@ -72,7 +75,7 @@ func NewUserInfoFromInput(in *UserInput) *UserInfo {
 	return &UserInfo{
 		Name:           in.Name,
 		Email:          in.Email,
-		Sex:            in.Sex,
+		Sex:            normalizeSex(in.Sex),
 		Age:            in.Age,
 		HeightCm:       in.HeightCm,
 		WeightKg:       in.WeightKg,
@@ -105,4 +108,8 @@ func NewUserWithStats(info *UserInfo, stats *UserStats) *UserWithStats {
 	userWithStats.CurrentCarbs = stats.CurrentCarbs
 
 	return userWithStats
+}
+
+func normalizeSex(sex string) string {
+	return strings.ToLower(strings.TrimSpace(sex))
 }

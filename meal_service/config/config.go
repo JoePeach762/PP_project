@@ -48,6 +48,7 @@ type KafkaConfig struct {
 type MealServiceSettings struct {
 	MinNameLen     uint32 `mapstructure:"min_name_len"`
 	MaxNameLen     uint32 `mapstructure:"max_name_len"`
+	MinWeightGrams uint32 `mapstructure:"min_weight_grams"`
 	MaxWeightGrams uint32 `mapstructure:"max_weight_grams"`
 	OFFUserAgent   string `mapstructure:"off_user_agent"`
 }

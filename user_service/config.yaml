@@ -18,5 +18,12 @@ kafka:
 user_service:
   min_name_len: 1
   max_name_len: 100
+  min_age: 1
+  max_age: 100
+  min_height_cm: 1
+  max_height_cm: 300
   min_weight: 30
   max_weight: 200
+  allowed_sexes:
+    - male
+    - female

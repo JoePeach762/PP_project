@@ -27,6 +27,7 @@ type Service struct {
 	offClient      OFFClient
 	minNameLength  uint32
 	maxNameLength  uint32
+	minWeightGrams uint32
 	maxWeightGrams uint32
 }
 
@@ -36,6 +37,7 @@ func NewMealService(
 	offClient OFFClient,
 	minNameLength uint32,
 	maxNameLength uint32,
+	minWeightGrams uint32,
 	maxWeightGrams uint32,
 ) *Service {
 	return &Service{
@@ -44,6 +46,7 @@ func NewMealService(
 		offClient:      offClient,
 		minNameLength:  minNameLength,
 		maxNameLength:  maxNameLength,
+		minWeightGrams: minWeightGrams,
 		maxWeightGrams: maxWeightGrams,
 	}
 }

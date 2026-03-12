@@ -5,12 +5,16 @@ import (
 	"encoding/json"
 
 	"github.com/JoePeach762/PP_project/meal_service/internal/models"
+	"github.com/redis/go-redis/v9"
 )
 
 func (c *RedisCache) GetProduct(ctx context.Context, name string) (*models.MealTemplate, error) {
 	key := "product:" + name
 	val, err := c.client.Get(ctx, key).Result()
 	if err != nil {
+		if err == redis.Nil {
+			return nil, nil
+		}
 		return nil, err
 	}
 

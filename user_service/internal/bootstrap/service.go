@@ -15,9 +15,14 @@ func InitUserService(
 	return user.NewUserService(
 		userStorage,
 		statsStorage,
-		uint32(cfg.UserServiceSettings.MinNameLen),
-		uint32(cfg.UserServiceSettings.MaxNameLen),
-		uint32(cfg.UserServiceSettings.MinWeight),
-		uint32(cfg.UserServiceSettings.MaxWeight),
+		cfg.UserServiceSettings.MinNameLen,
+		cfg.UserServiceSettings.MaxNameLen,
+		cfg.UserServiceSettings.MinAge,
+		cfg.UserServiceSettings.MaxAge,
+		cfg.UserServiceSettings.MinHeightCm,
+		cfg.UserServiceSettings.MaxHeightCm,
+		cfg.UserServiceSettings.MinWeight,
+		cfg.UserServiceSettings.MaxWeight,
+		cfg.UserServiceSettings.AllowedSexes,
 	)
 }

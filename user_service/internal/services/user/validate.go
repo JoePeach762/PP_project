@@ -1,7 +1,6 @@
 package user
 
 import (
-	"errors"
 	"fmt"
 	"net/mail"
 	"strings"
@@ -10,24 +9,26 @@ import (
 )
 
 func (s *Service) validateSingle(info *models.UserInput) error {
-	if len(info.Name) <= int(s.minNameLength) || len(info.Name) >= int(s.maxNameLength) {
-		return errors.New("имя не должно быть пустым и не должно превышать 100 символов")
+	if len(info.Name) < int(s.minNameLength) || len(info.Name) > int(s.maxNameLength) {
+		return fmt.Errorf("имя должно быть длиной от %d до %d символов", s.minNameLength, s.maxNameLength)
 	}
-	if info.Age <= 0 || info.Age > 100 {
-		return fmt.Errorf("некорректный возраст %v", info.Age)
+	if info.Age < s.minAge || info.Age > s.maxAge {
+		return fmt.Errorf("возраст должен быть в диапазоне от %d до %d", s.minAge, s.maxAge)
 	}
-	if info.HeightCm <= 0 || info.HeightCm > 300 {
-		return fmt.Errorf("некорректный рост %v", info.HeightCm)
+	if info.HeightCm < s.minHeightCm || info.HeightCm > s.maxHeightCm {
+		return fmt.Errorf("рост должен быть в диапазоне от %d до %d см", s.minHeightCm, s.maxHeightCm)
 	}
-	if info.WeightKg <= 0 || info.WeightKg > 200 {
-		return fmt.Errorf("некорректный вес %v", info.WeightKg)
+	if info.WeightKg < s.minWeight || info.WeightKg > s.maxWeight {
+		return fmt.Errorf("вес должен быть в диапазоне от %d до %d кг", s.minWeight, s.maxWeight)
 	}
-	if info.TargetWeightKg <= 0 || info.TargetWeightKg > 200 {
-		return fmt.Errorf("некорректный целевой вес %v", info.TargetWeightKg)
+	if info.TargetWeightKg < s.minWeight || info.TargetWeightKg > s.maxWeight {
+		return fmt.Errorf("целевой вес должен быть в диапазоне от %d до %d кг", s.minWeight, s.maxWeight)
 	}
-	if strings.ToLower(info.Sex) != "male" && strings.ToLower(info.Sex) != "female" {
+	normalizedSex := strings.ToLower(strings.TrimSpace(info.Sex))
+	if _, ok := s.allowedSexes[normalizedSex]; !ok {
 		return fmt.Errorf("некорректный пол %v", info.Sex)
 	}
+	info.Sex = normalizedSex
 	if !s.isValidEmail(info.Email) {
 		return fmt.Errorf("некорректный email: %v", info.Email)
 	}

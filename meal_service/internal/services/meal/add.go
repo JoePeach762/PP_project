@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"log/slog"
 	"time"
 
 	"github.com/JoePeach762/PP_project/meal_service/internal/models"
@@ -17,11 +18,16 @@ func (s *Service) Add(ctx context.Context, req *models.MealInput) error {
 
 	template, err := s.cache.GetProduct(ctx, req.Name)
 	if err != nil {
+		return fmt.Errorf("get product from cache: %w", err)
+	}
+	if template == nil {
 		template, err = s.offClient.FetchProduct(ctx, req.Name)
 		if err != nil {
 			return err
 		}
-		s.cache.AddProduct(ctx, template)
+		if err := s.cache.AddProduct(ctx, template); err != nil {
+			slog.Warn("Failed to cache product", "name", template.Name, "error", err)
+		}
 	}
 
 	eventID, err := newEventID()

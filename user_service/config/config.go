@@ -39,10 +39,15 @@ type KafkaConfig struct {
 }
 
 type UserServiceSettings struct {
-	MinNameLen uint8 `mapstructure:"min_name_len"`
-	MaxNameLen uint8 `mapstructure:"max_name_len"`
-	MinWeight  uint8 `mapstructure:"min_weight"`
-	MaxWeight  uint8 `mapstructure:"max_weight"`
+	MinNameLen   uint32   `mapstructure:"min_name_len"`
+	MaxNameLen   uint32   `mapstructure:"max_name_len"`
+	MinAge       uint32   `mapstructure:"min_age"`
+	MaxAge       uint32   `mapstructure:"max_age"`
+	MinHeightCm  uint32   `mapstructure:"min_height_cm"`
+	MaxHeightCm  uint32   `mapstructure:"max_height_cm"`
+	MinWeight    uint32   `mapstructure:"min_weight"`
+	MaxWeight    uint32   `mapstructure:"max_weight"`
+	AllowedSexes []string `mapstructure:"allowed_sexes"`
 }
 
 func LoadConfig(configPath string) (*Config, error) {

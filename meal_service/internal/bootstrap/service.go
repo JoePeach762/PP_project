@@ -19,6 +19,7 @@ func InitMealService(
 		offClient,
 		cfg.MealServiceSettings.MinNameLen,
 		cfg.MealServiceSettings.MaxNameLen,
+		cfg.MealServiceSettings.MinWeightGrams,
 		cfg.MealServiceSettings.MaxWeightGrams,
 	)
 }

@@ -23,5 +23,6 @@ kafka:
 meal_service:
   min_name_len: 1
   max_name_len: 255
+  min_weight_grams: 1
   max_weight_grams: 5000
   off_user_agent: ""

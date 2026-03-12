@@ -19,7 +19,6 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	httpSwagger "github.com/swaggo/http-swagger"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type Server struct {
@@ -44,26 +43,14 @@ func (s *Server) AppRun(
 	go userConsumer.Consume(ctx)
 
 	grpcAddr := fmt.Sprintf(":%d", grpcPort)
-	grpcReady := make(chan struct{})
 	errCh := make(chan error, 2)
 	go func() {
-		errCh <- s.runGRPCServer(grpcAddr, userGRPC, grpcReady)
+		errCh <- s.runGRPCServer(grpcAddr, userGRPC)
 	}()
-
-	select {
-	case <-ctx.Done():
-		return ctx.Err()
-	case err := <-errCh:
-		if err != nil {
-			return fmt.Errorf("gRPC server failed: %w", err)
-		}
-		return nil
-	case <-grpcReady:
-	}
 
 	httpAddr := fmt.Sprintf(":%d", httpPort)
 	go func() {
-		errCh <- s.runGatewayServer(ctx, httpAddr, grpcAddr)
+		errCh <- s.runGatewayServer(ctx, httpAddr, userGRPC)
 	}()
 
 	var runErr error
@@ -97,7 +84,7 @@ func (s *Server) AppRun(
 	return nil
 }
 
-func (s *Server) runGRPCServer(addr string, userGRPC *user.GRPCServer, ready chan<- struct{}) error {
+func (s *Server) runGRPCServer(addr string, userGRPC *user.GRPCServer) error {
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
@@ -105,13 +92,12 @@ func (s *Server) runGRPCServer(addr string, userGRPC *user.GRPCServer, ready cha
 
 	s.grpcServer = grpc.NewServer()
 	users_api.RegisterUserServiceServer(s.grpcServer, userGRPC)
-	close(ready)
 
 	slog.Info("gRPC server listening", "addr", addr)
 	return s.grpcServer.Serve(lis)
 }
 
-func (s *Server) runGatewayServer(ctx context.Context, httpAddr, grpcAddr string) error {
+func (s *Server) runGatewayServer(ctx context.Context, httpAddr string, userGRPC *user.GRPCServer) error {
 	r := chi.NewRouter()
 
 	swaggerPath := os.Getenv("SWAGGER_PATH")
@@ -127,11 +113,7 @@ func (s *Server) runGatewayServer(ctx context.Context, httpAddr, grpcAddr string
 	))
 
 	mux := runtime.NewServeMux()
-	opts := []grpc.DialOption{
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
-	}
-
-	if err := users_api.RegisterUserServiceHandlerFromEndpoint(ctx, mux, grpcAddr, opts); err != nil {
+	if err := users_api.RegisterUserServiceHandlerServer(ctx, mux, userGRPC); err != nil {
 		return fmt.Errorf("failed to register user service: %w", err)
 	}
 
