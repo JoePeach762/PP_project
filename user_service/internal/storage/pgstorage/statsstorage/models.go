@@ -3,12 +3,12 @@ package statsstorage
 import "time"
 
 type UserStats struct {
-	UserID   uint64    `db:"user_id"`
-	Calories uint32    `db:"calories"`
-	Proteins uint32    `db:"proteins"`
-	Fats     uint32    `db:"fats"`
-	Carbs    uint32    `db:"carbs"`
-	Date     time.Time `db:"date"`
+	UserID          uint64    `db:"user_id"`
+	CurrentCalories uint32    `db:"calories"`
+	CurrentProteins uint32    `db:"proteins"`
+	CurrentFats     uint32    `db:"fats"`
+	CurrentCarbs    uint32    `db:"carbs"`
+	Date            time.Time `db:"date"`
 }
 
 const (
@@ -19,4 +19,6 @@ const (
 	statsFatsColumnName     = "fats"
 	statsCarbsColumnName    = "carbs"
 	statsDateColumnName     = "date"
+	usersTableName          = "users_info"
+	usersIDColumnName       = "id"
 )

@@ -15,5 +15,5 @@ func (s *Service) Update(ctx context.Context, id uint64, input models.UserInput)
 	if err := s.calculateTargetsSingle(info); err != nil {
 		return fmt.Errorf("не удалось пересчитать цели: %w", err)
 	}
-	return s.storage.UpdateUser(ctx, id, *info)
+	return s.userStorage.UpdateUser(ctx, id, *info)
 }

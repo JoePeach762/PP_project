@@ -18,12 +18,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to load config: %v", err)
 	}
-	pgStorage, err := bootstrap.InitPGStorage(cfg)
+	userStorage, statsStorage, err := bootstrap.InitPGStorage(cfg)
 	if err != nil {
 		log.Fatalf("Failed to load pgstorage: %v", err)
 	}
 	kafkaProducer := bootstrap.InitKafkaProducer(cfg)
-	userService := bootstrap.InitUserService(pgStorage, kafkaProducer, cfg)
+	userService := bootstrap.InitUserService(userStorage, statsStorage, kafkaProducer, cfg)
 	userGRPC := user.NewGRPCServer(userService)
 	userProcessor := bootstrap.InitUserProcessor(userService)
 	userConsumer := bootstrap.InitUserConsumer(cfg, userProcessor)

@@ -19,7 +19,7 @@ func (s *Service) Add(ctx context.Context, input []*models.UserInput) error {
 	if err := s.calculateTargets(infos); err != nil {
 		return fmt.Errorf("не удалось рассчитать цели: %w", err)
 	}
-	return s.storage.AddUsers(ctx, infos)
+	return s.userStorage.AddUsers(ctx, infos)
 }
 
 // {

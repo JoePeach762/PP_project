@@ -1,22 +1,18 @@
 package userstorage
 
 type UserInfo struct {
-	ID              uint64 `db:"id"`
-	Name            string `db:"name"`
-	Email           string `db:"email"`
-	Sex             string `db:"sex"`
-	Age             uint32 `db:"age"`
-	HeightCm        uint32 `db:"height_cm"`
-	WeightKg        uint32 `db:"weight_kg"`
-	TargetWeightKg  uint32 `db:"target_weight_kg"`
-	CurrentCalories uint32 `db:"current_calories"`
-	CurrentProteins uint32 `db:"current_proteins"`
-	CurrentFats     uint32 `db:"current_fats"`
-	CurrentCarbs    uint32 `db:"current_carbs"`
-	TargetCalories  uint32 `db:"target_calories"`
-	TargetProteins  uint32 `db:"target_proteins"`
-	TargetFats      uint32 `db:"target_fats"`
-	TargetCarbs     uint32 `db:"target_carbs"`
+	ID             uint64 `db:"id"`
+	Name           string `db:"name"`
+	Email          string `db:"email"`
+	Sex            string `db:"sex"`
+	Age            uint32 `db:"age"`
+	HeightCm       uint32 `db:"height_cm"`
+	WeightKg       uint32 `db:"weight_kg"`
+	TargetWeightKg uint32 `db:"target_weight_kg"`
+	TargetCalories uint32 `db:"target_calories"`
+	TargetProteins uint32 `db:"target_proteins"`
+	TargetFats     uint32 `db:"target_fats"`
+	TargetCarbs    uint32 `db:"target_carbs"`
 }
 
 const (

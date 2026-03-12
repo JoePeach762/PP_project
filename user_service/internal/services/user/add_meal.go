@@ -7,7 +7,7 @@ import (
 )
 
 func (s *Service) AddMealToUser(ctx context.Context, meal *models.MealInfo) error {
-	return s.storage.AddMealToUser(ctx, meal)
+	return s.statsStorage.AddMealToUser(ctx, meal)
 }
 
 // {

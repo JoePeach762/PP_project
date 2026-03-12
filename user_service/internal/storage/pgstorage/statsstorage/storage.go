@@ -3,6 +3,7 @@ package statsstorage
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/pkg/errors"
@@ -38,11 +39,13 @@ func (s *PGstorage) initTables() error {
 	statsSQL := fmt.Sprintf(`
 		CREATE TABLE IF NOT EXISTS %s (
 			%s BIGINT NOT NULL,
-			%s SMALLINT DEFAULT 0 CHECK (%s > 0),
-			%s SMALLINT DEFAULT 0 CHECK (%s > 0),
-			%s SMALLINT DEFAULT 0 CHECK (%s > 0),
-			%s SMALLINT DEFAULT 0 CHECK (%s > 0),
-			%s TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+			%s INTEGER NOT NULL DEFAULT 0 CHECK (%s >= 0),
+			%s INTEGER NOT NULL DEFAULT 0 CHECK (%s >= 0),
+			%s INTEGER NOT NULL DEFAULT 0 CHECK (%s >= 0),
+			%s INTEGER NOT NULL DEFAULT 0 CHECK (%s >= 0),
+			%s DATE NOT NULL DEFAULT CURRENT_DATE,
+			PRIMARY KEY (%s, %s),
+			FOREIGN KEY (%s) REFERENCES %s(%s) ON DELETE CASCADE
 		)`, statsTableName,
 		statsUserIDColumnName,
 		statsCaloriesColumnName, statsCaloriesColumnName,
@@ -50,6 +53,8 @@ func (s *PGstorage) initTables() error {
 		statsFatsColumnName, statsFatsColumnName,
 		statsCarbsColumnName, statsCarbsColumnName,
 		statsDateColumnName,
+		statsUserIDColumnName, statsDateColumnName,
+		statsUserIDColumnName, usersTableName, usersIDColumnName,
 	)
 
 	_, err := s.db.Exec(context.Background(), statsSQL)
@@ -58,4 +63,13 @@ func (s *PGstorage) initTables() error {
 	}
 
 	return nil
+}
+
+func normalizeDate(date time.Time) time.Time {
+	if date.IsZero() {
+		date = time.Now()
+	}
+
+	year, month, day := date.Date()
+	return time.Date(year, month, day, 0, 0, 0, 0, date.Location())
 }
