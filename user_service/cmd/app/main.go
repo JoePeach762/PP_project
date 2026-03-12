@@ -1,8 +1,11 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
+	"os/signal"
+	"syscall"
 
 	"github.com/JoePeach762/PP_project/user_service/config"
 	"github.com/JoePeach762/PP_project/user_service/internal/bootstrap"
@@ -23,12 +26,23 @@ func main() {
 		log.Fatalf("Failed to load pgstorage: %v", err)
 	}
 	kafkaProducer := bootstrap.InitKafkaProducer(cfg)
-	userService := bootstrap.InitUserService(userStorage, statsStorage, kafkaProducer, cfg)
+	defer func() {
+		if err := kafkaProducer.Close(); err != nil {
+			log.Printf("Failed to close user Kafka producer: %v", err)
+		}
+	}()
+	userService := bootstrap.InitUserService(userStorage, statsStorage, cfg)
 	userGRPC := user.NewGRPCServer(userService)
 	userProcessor := bootstrap.InitUserProcessor(userService)
 	userConsumer := bootstrap.InitUserConsumer(cfg, userProcessor)
+	outboxPublisher := bootstrap.InitOutboxPublisher(userStorage, kafkaProducer)
 	server := bootstrap.NewServer()
-	if err := server.AppRun(userGRPC, userConsumer); err != nil {
+	ctx, stop := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
+	defer stop()
+
+	go outboxPublisher.Run(ctx)
+
+	if err := server.AppRun(ctx, userGRPC, userConsumer, cfg.HTTPPort, cfg.GRPCPort); err != nil {
 		log.Fatalf("user server failed: %v", err)
 	}
 }

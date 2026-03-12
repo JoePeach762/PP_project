@@ -15,6 +15,11 @@ type UserInfo struct {
 	TargetCarbs    uint32 `db:"target_carbs"`
 }
 
+type OutboxEvent struct {
+	ID      uint64
+	Payload []byte
+}
+
 const (
 	userTableName = "users_info"
 
@@ -30,4 +35,10 @@ const (
 	userTargetProteinsColumnName = "target_proteins"
 	userTargetFatsColumnName     = "target_fats"
 	userTargetCarbsColumnName    = "target_carbs"
+
+	outboxTableName             = "user_outbox"
+	outboxIDColumnName          = "id"
+	outboxPayloadColumnName     = "payload"
+	outboxCreatedAtColumnName   = "created_at"
+	outboxPublishedAtColumnName = "published_at"
 )

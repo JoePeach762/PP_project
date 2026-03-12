@@ -10,6 +10,7 @@ import (
 
 type Config struct {
 	HTTPPort int `mapstructure:"http_port"`
+	GRPCPort int `mapstructure:"grpc_port"`
 
 	Database DatabaseConfig `mapstructure:"database"`
 	Kafka    KafkaConfig    `mapstructure:"kafka"`

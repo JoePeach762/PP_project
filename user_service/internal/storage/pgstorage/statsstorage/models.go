@@ -21,4 +21,9 @@ const (
 	statsDateColumnName     = "date"
 	usersTableName          = "users_info"
 	usersIDColumnName       = "id"
+
+	processedMealEventsTableName       = "processed_meal_events"
+	processedMealEventIDColumnName     = "event_id"
+	processedMealUserIDColumnName      = "user_id"
+	processedMealProcessedAtColumnName = "processed_at"
 )

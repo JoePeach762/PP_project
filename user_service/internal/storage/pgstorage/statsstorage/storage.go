@@ -62,6 +62,22 @@ func (s *PGstorage) initTables() error {
 		return errors.Wrap(err, "init stats table")
 	}
 
+	processedMealEventsSQL := fmt.Sprintf(`
+		CREATE TABLE IF NOT EXISTS %s (
+			%s VARCHAR(128) PRIMARY KEY,
+			%s BIGINT NOT NULL,
+			%s TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+		)`, processedMealEventsTableName,
+		processedMealEventIDColumnName,
+		processedMealUserIDColumnName,
+		processedMealProcessedAtColumnName,
+	)
+
+	_, err = s.db.Exec(context.Background(), processedMealEventsSQL)
+	if err != nil {
+		return errors.Wrap(err, "init processed meal events table")
+	}
+
 	return nil
 }
 

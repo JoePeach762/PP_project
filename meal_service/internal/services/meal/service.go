@@ -10,12 +10,8 @@ type OFFClient interface {
 	FetchProduct(ctx context.Context, name string) (*models.MealTemplate, error)
 }
 
-type producer interface {
-	PublishMealConsumed(ctx context.Context, event *models.MealInfo) error
-}
-
 type storage interface {
-	AddMeal(ctx context.Context, info *models.MealInfo) error
+	AddMealAndEnqueueEvent(ctx context.Context, info *models.MealInfo) error
 	GetMealsByUserId(ctx context.Context, id uint64) ([]*models.MealInfo, error)
 	DeleteByUserIds(ctx context.Context, ids []uint64) error
 }
@@ -26,7 +22,6 @@ type cache interface {
 }
 
 type Service struct {
-	producer       producer
 	storage        storage
 	cache          cache
 	offClient      OFFClient
@@ -36,7 +31,6 @@ type Service struct {
 }
 
 func NewMealService(
-	producer producer,
 	storage storage,
 	cache cache,
 	offClient OFFClient,
@@ -45,7 +39,6 @@ func NewMealService(
 	maxWeightGrams uint32,
 ) *Service {
 	return &Service{
-		producer:       producer,
 		storage:        storage,
 		cache:          cache,
 		offClient:      offClient,

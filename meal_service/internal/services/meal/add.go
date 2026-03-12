@@ -2,6 +2,9 @@ package meal
 
 import (
 	"context"
+	"crypto/rand"
+	"encoding/hex"
+	"fmt"
 	"time"
 
 	"github.com/JoePeach762/PP_project/meal_service/internal/models"
@@ -21,7 +24,13 @@ func (s *Service) Add(ctx context.Context, req *models.MealInput) error {
 		s.cache.AddProduct(ctx, template)
 	}
 
+	eventID, err := newEventID()
+	if err != nil {
+		return fmt.Errorf("generate meal event id: %w", err)
+	}
+
 	info := &models.MealInfo{
+		EventID:      eventID,
 		Name:         req.Name,
 		UserId:       req.UserID,
 		WeightGrams:  req.WeightGrams,
@@ -32,11 +41,14 @@ func (s *Service) Add(ctx context.Context, req *models.MealInput) error {
 		Date:         time.Now(),
 	}
 
-	err = s.storage.AddMeal(ctx, info)
-	if err != nil {
-		return err
+	return s.storage.AddMealAndEnqueueEvent(ctx, info)
+}
+
+func newEventID() (string, error) {
+	var raw [16]byte
+	if _, err := rand.Read(raw[:]); err != nil {
+		return "", err
 	}
-	// TODO: здесь две разные операции без транзакции/outbox.
-	// Если запись в БД прошла, а публикация в Kafka нет, состояние сервисов разъедется.
-	return s.producer.PublishMealConsumed(ctx, info)
+
+	return hex.EncodeToString(raw[:]), nil
 }

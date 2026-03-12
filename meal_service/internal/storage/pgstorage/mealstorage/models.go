@@ -14,6 +14,11 @@ type MealInfo struct {
 	Date         time.Time `db:"date"`
 }
 
+type OutboxEvent struct {
+	ID      uint64
+	Payload []byte
+}
+
 const (
 	mealTableName              = "meal_info"
 	mealIDColumnName           = "id"
@@ -25,4 +30,10 @@ const (
 	mealFats100gColumnName     = "fats_100g"
 	mealCarbs100gColumnName    = "carbs_100g"
 	mealDateColumnName         = "date"
+
+	outboxTableName             = "meal_outbox"
+	outboxIDColumnName          = "id"
+	outboxPayloadColumnName     = "payload"
+	outboxCreatedAtColumnName   = "created_at"
+	outboxPublishedAtColumnName = "published_at"
 )

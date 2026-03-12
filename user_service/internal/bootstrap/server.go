@@ -2,13 +2,12 @@ package bootstrap
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"net"
 	"net/http"
 	"os"
-	"os/signal"
-	"syscall"
 	"time"
 
 	userconsumer "github.com/JoePeach762/PP_project/user_service/internal/consumer/user"
@@ -33,54 +32,72 @@ func NewServer() *Server {
 }
 
 func (s *Server) AppRun(
+	ctx context.Context,
 	userGRPC *user.GRPCServer,
 	userConsumer *userconsumer.Consumer,
+	httpPort int,
+	grpcPort int,
 ) error {
-	ctx, cancel := context.WithCancel(context.Background())
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
-
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
 
 	go userConsumer.Consume(ctx)
 
-	// TODO: порт захардкожен и не связан с config.yaml; при запуске рядом с meal_service
-	// будет конфликт по одному и тому же gRPC-адресу.
-	grpcAddr := ":50051"
+	grpcAddr := fmt.Sprintf(":%d", grpcPort)
+	grpcReady := make(chan struct{})
+	errCh := make(chan error, 2)
 	go func() {
-		if err := s.runGRPCServer(grpcAddr, userGRPC); err != nil {
-			slog.Error("gRPC server failed", "error", err)
-			cancel()
-		}
+		errCh <- s.runGRPCServer(grpcAddr, userGRPC, grpcReady)
 	}()
 
-	// TODO: ожидание через Sleep не гарантирует, что gRPC уже успел подняться.
-	// Нужен явный сигнал readiness или запуск gateway после успешного Listen.
-	time.Sleep(100 * time.Millisecond)
-
-	// TODO: HTTP-порт тоже захардкожен и игнорирует cfg.HTTPPort.
-	httpAddr := ":8080"
-	if err := s.runGatewayServer(ctx, httpAddr, grpcAddr); err != nil {
-		return fmt.Errorf("gateway server failed: %w", err)
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	case err := <-errCh:
+		if err != nil {
+			return fmt.Errorf("gRPC server failed: %w", err)
+		}
+		return nil
+	case <-grpcReady:
 	}
 
-	<-sigChan
-	slog.Info("Shutting down...")
+	httpAddr := fmt.Sprintf(":%d", httpPort)
+	go func() {
+		errCh <- s.runGatewayServer(ctx, httpAddr, grpcAddr)
+	}()
+
+	var runErr error
+	select {
+	case <-ctx.Done():
+		slog.Info("Shutting down...")
+	case err := <-errCh:
+		if err != nil && !errors.Is(err, http.ErrServerClosed) {
+			runErr = err
+			slog.Error("Server runtime failed", "error", err)
+		}
+		cancel()
+	}
 
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer shutdownCancel()
 
 	if s.httpServer != nil {
-		s.httpServer.Shutdown(shutdownCtx)
+		if err := s.httpServer.Shutdown(shutdownCtx); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			return fmt.Errorf("shutdown gateway server: %w", err)
+		}
 	}
 	if s.grpcServer != nil {
 		s.grpcServer.GracefulStop()
 	}
 
+	if runErr != nil {
+		return fmt.Errorf("server run failed: %w", runErr)
+	}
+
 	return nil
 }
 
-func (s *Server) runGRPCServer(addr string, userGRPC *user.GRPCServer) error {
+func (s *Server) runGRPCServer(addr string, userGRPC *user.GRPCServer, ready chan<- struct{}) error {
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
 		return fmt.Errorf("failed to listen: %w", err)
@@ -88,6 +105,7 @@ func (s *Server) runGRPCServer(addr string, userGRPC *user.GRPCServer) error {
 
 	s.grpcServer = grpc.NewServer()
 	users_api.RegisterUserServiceServer(s.grpcServer, userGRPC)
+	close(ready)
 
 	slog.Info("gRPC server listening", "addr", addr)
 	return s.grpcServer.Serve(lis)

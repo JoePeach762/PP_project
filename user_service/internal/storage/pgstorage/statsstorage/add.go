@@ -7,11 +7,50 @@ import (
 
 	"github.com/JoePeach762/PP_project/user_service/internal/models"
 	"github.com/Masterminds/squirrel"
+	"github.com/jackc/pgx/v5"
 	"github.com/pkg/errors"
 )
 
-func (s *PGstorage) AddMealToUser(ctx context.Context, info *models.MealInfo) error {
+func (s *PGstorage) AddMealToUser(ctx context.Context, info *models.MealInfo) (err error) {
+	if info.EventID == "" {
+		return errors.New("meal event id is required")
+	}
+
 	stats := newStatsFromMeal(info)
+	tx, err := s.db.BeginTx(ctx, pgx.TxOptions{})
+	if err != nil {
+		return errors.Wrap(err, "begin addMeal transaction")
+	}
+	defer func() {
+		if err == nil {
+			return
+		}
+		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil && rollbackErr != pgx.ErrTxClosed {
+			err = errors.Wrap(rollbackErr, "rollback addMeal transaction")
+		}
+	}()
+
+	eventQuery := squirrel.Insert(processedMealEventsTableName).
+		Columns(processedMealEventIDColumnName, processedMealUserIDColumnName).
+		Values(info.EventID, info.UserId).
+		Suffix(fmt.Sprintf("ON CONFLICT (%s) DO NOTHING", processedMealEventIDColumnName)).
+		PlaceholderFormat(squirrel.Dollar)
+
+	eventQueryText, eventArgs, err := eventQuery.ToSql()
+	if err != nil {
+		return errors.Wrap(err, "generate processed_meal_events INSERT query")
+	}
+
+	eventResult, err := tx.Exec(ctx, eventQueryText, eventArgs...)
+	if err != nil {
+		return errors.Wrap(err, "execute processed_meal_events INSERT query")
+	}
+	if eventResult.RowsAffected() == 0 {
+		if err = tx.Commit(ctx); err != nil {
+			return errors.Wrap(err, "commit duplicate meal event transaction")
+		}
+		return nil
+	}
 
 	query := squirrel.Insert(statsTableName).
 		Columns(
@@ -49,9 +88,13 @@ func (s *PGstorage) AddMealToUser(ctx context.Context, info *models.MealInfo) er
 		return errors.Wrap(err, "generate addMeal INSERT query")
 	}
 
-	_, err = s.db.Exec(ctx, queryText, args...)
+	_, err = tx.Exec(ctx, queryText, args...)
 	if err != nil {
 		return errors.Wrap(err, "execute addMeal INSERT query")
+	}
+
+	if err = tx.Commit(ctx); err != nil {
+		return errors.Wrap(err, "commit addMeal transaction")
 	}
 
 	return nil

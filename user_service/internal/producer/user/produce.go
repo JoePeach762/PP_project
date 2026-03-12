@@ -3,7 +3,6 @@ package userproducer
 import (
 	"context"
 	"encoding/json"
-	"time"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -18,8 +17,5 @@ func (p *UserKafkaProducer) PublishUsersDeleted(ctx context.Context, ids []uint6
 		Value: data,
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
-	defer cancel()
-
-	return p.writer.WriteMessages(ctx, msg)
+	return p.PublishMessage(ctx, msg.Value)
 }

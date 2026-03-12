@@ -1,4 +1,5 @@
-http_port: 8081
+http_port: 8080
+grpc_port: 50051
 
 database:
   host: postgres-meals

@@ -12,6 +12,7 @@ type userStorage interface {
 	GetUsersByIds(ctx context.Context, ids []uint64) ([]*models.UserInfo, error)
 	UpdateUser(ctx context.Context, id uint64, info models.UserInfo) error
 	DeleteUsers(ctx context.Context, ids []uint64) error
+	DeleteUsersAndEnqueueEvent(ctx context.Context, ids []uint64) error
 }
 
 type statsStorage interface {
@@ -19,14 +20,9 @@ type statsStorage interface {
 	GetStatsByUserIDs(ctx context.Context, ids []uint64, date time.Time) ([]*models.UserStats, error)
 }
 
-type producer interface {
-	PublishUsersDeleted(ctx context.Context, ids []uint64) error
-}
-
 type Service struct {
 	userStorage   userStorage
 	statsStorage  statsStorage
-	producer      producer
 	minNameLength uint32
 	maxNameLength uint32
 	minWeight     uint32
@@ -36,7 +32,6 @@ type Service struct {
 func NewUserService(
 	userStorage userStorage,
 	statsStorage statsStorage,
-	producer producer,
 	minNameLength uint32,
 	maxNameLength uint32,
 	minWeight uint32,
@@ -45,7 +40,6 @@ func NewUserService(
 	return &Service{
 		userStorage:   userStorage,
 		statsStorage:  statsStorage,
-		producer:      producer,
 		minNameLength: minNameLength,
 		maxNameLength: maxNameLength,
 		minWeight:     minWeight,

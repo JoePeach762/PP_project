@@ -76,5 +76,37 @@ func (s *PGstorage) initTables() error {
 		return errors.Wrap(err, "create meal_info index")
 	}
 
+	outboxSQL := fmt.Sprintf(`
+	CREATE TABLE IF NOT EXISTS %s (
+		%s BIGSERIAL PRIMARY KEY,
+		%s BYTEA NOT NULL,
+		%s TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
+		%s TIMESTAMP WITH TIME ZONE
+	)`, outboxTableName,
+		outboxIDColumnName,
+		outboxPayloadColumnName,
+		outboxCreatedAtColumnName,
+		outboxPublishedAtColumnName,
+	)
+
+	_, err = s.db.Exec(context.Background(), outboxSQL)
+	if err != nil {
+		return errors.Wrap(err, "init meal outbox table")
+	}
+
+	outboxIndexSQL := fmt.Sprintf(`
+	CREATE INDEX IF NOT EXISTS idx_%s_unpublished
+	ON %s (%s, %s)`,
+		outboxTableName,
+		outboxTableName,
+		outboxPublishedAtColumnName,
+		outboxIDColumnName,
+	)
+
+	_, err = s.db.Exec(context.Background(), outboxIndexSQL)
+	if err != nil {
+		return errors.Wrap(err, "create meal outbox index")
+	}
+
 	return nil
 }
