@@ -4,11 +4,11 @@ import (
 	"fmt"
 
 	"github.com/JoePeach762/PP_project/user_service/config"
-	"github.com/JoePeach762/PP_project/user_service/internal/storage/pgstorage"
+	userstorage "github.com/JoePeach762/PP_project/user_service/internal/storage/pgstorage/userstorage"
 	"github.com/pkg/errors"
 )
 
-func InitPGStorage(cfg *config.Config) (*pgstorage.PGstorage, error) {
+func InitPGStorage(cfg *config.Config) (*userstorage.PGstorage, error) {
 	connString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=%s",
 		cfg.Database.Username,
 		cfg.Database.Password,
@@ -18,7 +18,7 @@ func InitPGStorage(cfg *config.Config) (*pgstorage.PGstorage, error) {
 		cfg.Database.SSLMode,
 	)
 
-	storage, err := pgstorage.NewPGStorage(connString)
+	storage, err := userstorage.NewPGStorage(connString)
 	if err != nil {
 		return nil, errors.Wrap(err, "ошибка инициализации PostgreSQL")
 	}

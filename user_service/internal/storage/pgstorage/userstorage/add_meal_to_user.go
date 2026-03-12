@@ -1,4 +1,4 @@
-package pgstorage
+package userstorage
 
 import (
 	"context"
@@ -9,6 +9,8 @@ import (
 )
 
 func (s *PGstorage) AddMealToUser(ctx context.Context, info *models.MealInfo) error {
+	// TODO: это UPDATE перезаписывает текущие суточные значения последним приемом пищи.
+	// Для дневной статистики здесь ожидается инкремент (+) и, вероятно, отдельная таблица с датой/срезом по дням.
 	query := squirrel.Update(userTableName).
 		Set(userCurrentCaloriesColumnName, info.Calories100g*info.WeightGrams/100).
 		Set(userCurrentProteinsColumnName, info.Proteins100g*info.WeightGrams/100).

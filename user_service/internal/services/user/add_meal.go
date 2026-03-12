@@ -9,3 +9,11 @@ import (
 func (s *Service) AddMealToUser(ctx context.Context, meal *models.MealInfo) error {
 	return s.storage.AddMealToUser(ctx, meal)
 }
+
+// {
+//   "meal": {
+//     "userId": "3",
+//     "name": "Apple granny smith",
+//     "weightGrams": 200
+//   }
+// }

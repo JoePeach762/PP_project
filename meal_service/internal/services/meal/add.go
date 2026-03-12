@@ -36,5 +36,7 @@ func (s *Service) Add(ctx context.Context, req *models.MealInput) error {
 	if err != nil {
 		return err
 	}
+	// TODO: здесь две разные операции без транзакции/outbox.
+	// Если запись в БД прошла, а публикация в Kafka нет, состояние сервисов разъедется.
 	return s.producer.PublishMealConsumed(ctx, info)
 }

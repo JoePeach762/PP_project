@@ -1,4 +1,4 @@
-package pgstorage
+package userstorage
 
 import (
 	"context"
@@ -25,21 +25,17 @@ func (storage *PGstorage) AddUsers(ctx context.Context, infos []*models.UserInfo
 func (storage *PGstorage) addUsersQuery(userInfos []*models.UserInfo) squirrel.Sqlizer {
 	infos := lo.Map(userInfos, func(info *models.UserInfo, _ int) *UserInfo {
 		return &UserInfo{
-			Name:            info.Name,
-			Email:           info.Email,
-			Sex:             info.Sex,
-			Age:             info.Age,
-			HeightCm:        info.HeightCm,
-			WeightKg:        info.WeightKg,
-			TargetWeightKg:  info.TargetWeightKg,
-			CurrentCalories: 0,
-			CurrentProteins: 0,
-			CurrentFats:     0,
-			CurrentCarbs:    0,
-			TargetCalories:  info.TargetCalories,
-			TargetProteins:  info.TargetProteins,
-			TargetFats:      info.TargetFats,
-			TargetCarbs:     info.TargetCarbs,
+			Name:           info.Name,
+			Email:          info.Email,
+			Sex:            info.Sex,
+			Age:            info.Age,
+			HeightCm:       info.HeightCm,
+			WeightKg:       info.WeightKg,
+			TargetWeightKg: info.TargetWeightKg,
+			TargetCalories: info.TargetCalories,
+			TargetProteins: info.TargetProteins,
+			TargetFats:     info.TargetFats,
+			TargetCarbs:    info.TargetCarbs,
 		}
 	})
 
@@ -53,10 +49,6 @@ func (storage *PGstorage) addUsersQuery(userInfos []*models.UserInfo) squirrel.S
 			userHeightCmColumnName,
 			userWeightKgColumnName,
 			userTargetWeightKgColumnName,
-			userCurrentCaloriesColumnName,
-			userCurrentProteinsColumnName,
-			userCurrentFatsColumnName,
-			userCurrentCarbsColumnName,
 			userTargetCaloriesColumnName,
 			userTargetProteinsColumnName,
 			userTargetFatsColumnName,
@@ -72,10 +64,6 @@ func (storage *PGstorage) addUsersQuery(userInfos []*models.UserInfo) squirrel.S
 			info.HeightCm,
 			info.WeightKg,
 			info.TargetWeightKg,
-			info.CurrentCalories,
-			info.CurrentProteins,
-			info.CurrentFats,
-			info.CurrentCarbs,
 			info.TargetCalories,
 			info.TargetProteins,
 			info.TargetFats,

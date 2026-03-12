@@ -1,4 +1,4 @@
-package pgstorage
+package userstorage
 
 import (
 	"context"

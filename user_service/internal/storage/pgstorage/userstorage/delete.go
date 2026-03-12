@@ -1,5 +1,4 @@
-// internal/storage/pgstorage/delete.go
-package pgstorage
+package userstorage
 
 import (
 	"context"

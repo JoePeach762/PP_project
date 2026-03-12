@@ -1,4 +1,4 @@
-package pgstorage
+package mealstorage
 
 import "time"
 

@@ -44,6 +44,8 @@ func (s *Server) AppRun(
 
 	go userConsumer.Consume(ctx)
 
+	// TODO: порт захардкожен и не связан с config.yaml; при запуске рядом с meal_service
+	// будет конфликт по одному и тому же gRPC-адресу.
 	grpcAddr := ":50051"
 	go func() {
 		if err := s.runGRPCServer(grpcAddr, userGRPC); err != nil {
@@ -52,8 +54,11 @@ func (s *Server) AppRun(
 		}
 	}()
 
+	// TODO: ожидание через Sleep не гарантирует, что gRPC уже успел подняться.
+	// Нужен явный сигнал readiness или запуск gateway после успешного Listen.
 	time.Sleep(100 * time.Millisecond)
 
+	// TODO: HTTP-порт тоже захардкожен и игнорирует cfg.HTTPPort.
 	httpAddr := ":8080"
 	if err := s.runGatewayServer(ctx, httpAddr, grpcAddr); err != nil {
 		return fmt.Errorf("gateway server failed: %w", err)

@@ -21,3 +21,17 @@ func (s *Service) Add(ctx context.Context, input []*models.UserInput) error {
 	}
 	return s.storage.AddUsers(ctx, infos)
 }
+
+// {
+//   "users": [
+//     {
+//       "name": "john",
+//       "email": "john@mail.ru",
+//       "sex": "male",
+//       "age": 22,
+//       "heightCm": 190,
+//       "weightKg": 67,
+//       "targetWeightKg": 90
+//     }
+//   ]
+// }

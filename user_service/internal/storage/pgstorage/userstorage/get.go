@@ -1,4 +1,4 @@
-package pgstorage
+package userstorage
 
 import (
 	"context"
@@ -32,10 +32,6 @@ func (storage *PGstorage) GetUsersByIds(ctx context.Context, ids []uint64) ([]*m
 			&u.HeightCm,
 			&u.WeightKg,
 			&u.TargetWeightKg,
-			&u.CurrentCalories,
-			&u.CurrentProteins,
-			&u.CurrentFats,
-			&u.CurrentCarbs,
 			&u.TargetCalories,
 			&u.TargetProteins,
 			&u.TargetFats,
@@ -59,10 +55,6 @@ func (storage *PGstorage) getUsersQuery(IDs []uint64) squirrel.Sqlizer {
 			userHeightCmColumnName,
 			userWeightKgColumnName,
 			userTargetWeightKgColumnName,
-			userCurrentCaloriesColumnName,
-			userCurrentProteinsColumnName,
-			userCurrentFatsColumnName,
-			userCurrentCarbsColumnName,
 			userTargetCaloriesColumnName,
 			userTargetProteinsColumnName,
 			userTargetFatsColumnName,

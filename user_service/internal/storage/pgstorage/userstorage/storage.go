@@ -1,4 +1,4 @@
-package pgstorage
+package userstorage
 
 import (
 	"context"
@@ -35,7 +35,6 @@ func NewPGStorage(connString string) (*PGstorage, error) {
 }
 
 func (s *PGstorage) initTables() error {
-
 	userSQL := fmt.Sprintf(`
 		CREATE TABLE IF NOT EXISTS %s (
 			%s SERIAL PRIMARY KEY,
@@ -49,10 +48,6 @@ func (s *PGstorage) initTables() error {
 			%s SMALLINT DEFAULT 0 CHECK (%s >= 0),
 			%s SMALLINT DEFAULT 0 CHECK (%s >= 0),
 			%s SMALLINT DEFAULT 0 CHECK (%s >= 0),
-			%s SMALLINT DEFAULT 0 CHECK (%s >= 0),
-			%s SMALLINT DEFAULT 0 CHECK (%s >= 0),
-			%s SMALLINT DEFAULT 0 CHECK (%s >= 0),
-			%s SMALLINT DEFAULT 0 CHECK (%s >= 0),
 			%s SMALLINT DEFAULT 0 CHECK (%s >= 0)
 		)`, userTableName,
 		userIDColumnName,
@@ -63,10 +58,6 @@ func (s *PGstorage) initTables() error {
 		userHeightCmColumnName, userHeightCmColumnName, userHeightCmColumnName,
 		userWeightKgColumnName, userWeightKgColumnName,
 		userTargetWeightKgColumnName, userTargetWeightKgColumnName,
-		userCurrentCaloriesColumnName, userCurrentCaloriesColumnName,
-		userCurrentProteinsColumnName, userCurrentProteinsColumnName,
-		userCurrentFatsColumnName, userCurrentFatsColumnName,
-		userCurrentCarbsColumnName, userCurrentCarbsColumnName,
 		userTargetCaloriesColumnName, userTargetCaloriesColumnName,
 		userTargetProteinsColumnName, userTargetProteinsColumnName,
 		userTargetFatsColumnName, userTargetFatsColumnName,

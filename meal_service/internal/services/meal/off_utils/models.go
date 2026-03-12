@@ -23,7 +23,7 @@ type OFFNutriments struct {
 
 func (n *OFFNutriments) UnmarshalJSON(data []byte) error {
 	type Alias OFFNutriments
-	aux := &struct {
+	nutriments := &struct {
 		EnergyKcal    interface{} `json:"energy-kcal_100g"`
 		Proteins      interface{} `json:"proteins_100g"`
 		Fat           interface{} `json:"fat_100g"`
@@ -33,14 +33,14 @@ func (n *OFFNutriments) UnmarshalJSON(data []byte) error {
 		Alias: (*Alias)(n),
 	}
 
-	if err := json.Unmarshal(data, &aux); err != nil {
+	if err := json.Unmarshal(data, &nutriments); err != nil {
 		return err
 	}
 
-	n.EnergyKcal = parseFloat32(aux.EnergyKcal)
-	n.Proteins = parseFloat32(aux.Proteins)
-	n.Fat = parseFloat32(aux.Fat)
-	n.Carbohydrates = parseFloat32(aux.Carbohydrates)
+	n.EnergyKcal = parseFloat32(nutriments.EnergyKcal)
+	n.Proteins = parseFloat32(nutriments.Proteins)
+	n.Fat = parseFloat32(nutriments.Fat)
+	n.Carbohydrates = parseFloat32(nutriments.Carbohydrates)
 
 	return nil
 }

@@ -42,6 +42,8 @@ message CreateUsersRequest {
 message CreateUsersResponse {}
 
 message UpdateUserRequest {
+  // NOTE: Поле названо в PascalCase, из-за этого в HTTP path появляется /v1/users/{UserId}.
+  // Для protobuf/gateway обычно безопаснее держать snake_case/lowerCamelCase, чтобы REST-контракт был предсказуемее.
   uint64 UserId = 1;
   users.models.v1.UserInput user = 2;
 }
@@ -57,6 +59,8 @@ message GetUsersResponse {
 }
 
 message DeleteUsersRequest {
+  // TODO: repeated ids в path работает как CSV-параметр, но такой контракт неудобен и хрупок для клиентов.
+  // Для пакетного удаления лучше query-параметр или тело POST/DELETE-операции.
   repeated uint64 ids = 1;
 }
 
