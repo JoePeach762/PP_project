@@ -1,9 +1,10 @@
 packages:
-    github.com/JoePeach762/PP_project/internal/services/studentsService:
+    github.com/JoePeach762/PP_project/user_service/internal/services/user:
         config:
             dir: "{{.InterfaceDir}}/mocks"
-            filename: "mocks.go"
-            pkgname: "mocks"
-            structname: "{{.InterfaceName}}"
-        interfaces:
-            StudentStorage:
+            outpkg: "mocks"
+            filename: "{{.InterfaceName | snakecase }}.go"
+            include-regex: "^(userStorage|statsStorage)$"
+            all: True
+            exported: True
+            mockname: "{{.InterfaceName | firstUpper }}"

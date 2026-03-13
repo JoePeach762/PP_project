@@ -10,10 +10,14 @@ up:
 down:
 	docker-compose down
 
-.PHONY: cov
-cov:
-	go test -cover ./... 
+.PHONY: test-user-service
+test-user-service:
+	go -C user_service test ./internal/services/user/...
 
-.PHONY: mock
-mock:
-	mockery
+.PHONY: cov-user-service
+cov-user-service:
+	go -C user_service test -cover ./internal/services/user/...
+
+.PHONY: mock-user-service
+mock-user-service:
+	cd user_service && mockery --config ../.mockery.yaml
