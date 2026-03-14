@@ -42,8 +42,6 @@ message GetMealsResponse {
 }
 
 message DeleteMealsRequest {
-  // TODO: repeated user_ids в path также превращается в CSV path-параметр.
-  // Для bulk-операции это хуже читается и хуже документируется, чем query/body.
   repeated uint64 user_ids = 1;
 }
 

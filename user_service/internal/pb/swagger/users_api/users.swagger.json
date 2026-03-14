@@ -101,7 +101,6 @@
         "parameters": [
           {
             "name": "UserId",
-            "description": "NOTE: Поле названо в PascalCase, из-за этого в HTTP path появляется /v1/users/{UserId}.\nДля protobuf/gateway обычно безопаснее держать snake_case/lowerCamelCase, чтобы REST-контракт был предсказуемее.",
             "in": "path",
             "required": true,
             "type": "string",
@@ -141,7 +140,6 @@
         "parameters": [
           {
             "name": "ids",
-            "description": "TODO: repeated ids в path работает как CSV-параметр, но такой контракт неудобен и хрупок для клиентов.\nДля пакетного удаления лучше query-параметр или тело POST/DELETE-операции.",
             "in": "path",
             "required": true,
             "type": "array",

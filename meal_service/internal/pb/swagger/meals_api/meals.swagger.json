@@ -98,7 +98,6 @@
         "parameters": [
           {
             "name": "userIds",
-            "description": "TODO: repeated user_ids в path также превращается в CSV path-параметр.\nДля bulk-операции это хуже читается и хуже документируется, чем query/body.",
             "in": "path",
             "required": true,
             "type": "array",
