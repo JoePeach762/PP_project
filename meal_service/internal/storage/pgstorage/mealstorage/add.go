@@ -15,11 +15,11 @@ func (storage *PGstorage) AddMeal(ctx context.Context, info *models.MealInfo) er
 	query := storage.addMealsQuery([]*models.MealInfo{info})
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate !meals! single-query error")
+		return errors.Wrap(err, "не удалось сформировать запрос на добавление приема пищи")
 	}
 	_, err = storage.db.Exec(ctx, queryText, args...)
 	if err != nil {
-		err = errors.Wrap(err, "exeс !meals! single-query error")
+		err = errors.Wrap(err, "не удалось выполнить запрос на добавление приема пищи")
 	}
 	return err
 }
@@ -27,29 +27,29 @@ func (storage *PGstorage) AddMeal(ctx context.Context, info *models.MealInfo) er
 func (storage *PGstorage) AddMealAndEnqueueEvent(ctx context.Context, info *models.MealInfo) (err error) {
 	payload, err := json.Marshal(info)
 	if err != nil {
-		return errors.Wrap(err, "marshal meal event")
+		return errors.Wrap(err, "не удалось сериализовать событие о приеме пищи")
 	}
 
 	tx, err := storage.db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
-		return errors.Wrap(err, "begin add meal transaction")
+		return errors.Wrap(err, "не удалось начать транзакцию добавления приема пищи")
 	}
 	defer func() {
 		if err == nil {
 			return
 		}
 		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil && rollbackErr != pgx.ErrTxClosed {
-			err = errors.Wrap(rollbackErr, "rollback add meal transaction")
+			err = errors.Wrap(rollbackErr, "не удалось откатить транзакцию добавления приема пищи")
 		}
 	}()
 
 	query := storage.addMealsQuery([]*models.MealInfo{info})
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate add meal query")
+		return errors.Wrap(err, "не удалось сформировать запрос на добавление приема пищи")
 	}
 	if _, err = tx.Exec(ctx, queryText, args...); err != nil {
-		return errors.Wrap(err, "execute add meal query")
+		return errors.Wrap(err, "не удалось выполнить запрос на добавление приема пищи")
 	}
 
 	outboxQuery := squirrel.Insert(outboxTableName).
@@ -59,14 +59,14 @@ func (storage *PGstorage) AddMealAndEnqueueEvent(ctx context.Context, info *mode
 
 	outboxQueryText, outboxArgs, err := outboxQuery.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate meal outbox query")
+		return errors.Wrap(err, "не удалось сформировать запрос в meal outbox")
 	}
 	if _, err = tx.Exec(ctx, outboxQueryText, outboxArgs...); err != nil {
-		return errors.Wrap(err, "execute meal outbox query")
+		return errors.Wrap(err, "не удалось выполнить запрос в meal outbox")
 	}
 
 	if err = tx.Commit(ctx); err != nil {
-		return errors.Wrap(err, "commit add meal transaction")
+		return errors.Wrap(err, "не удалось зафиксировать транзакцию добавления приема пищи")
 	}
 
 	return nil

@@ -29,12 +29,12 @@ func (s *PGstorage) GetStatsByUserIDs(ctx context.Context, ids []uint64, date ti
 
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return nil, errors.Wrap(err, "generate !stats! query error")
+		return nil, errors.Wrap(err, "не удалось сформировать запрос на получение статистики")
 	}
 
 	rows, err := s.db.Query(ctx, queryText, args...)
 	if err != nil {
-		return nil, errors.Wrap(err, "quering !stats! error")
+		return nil, errors.Wrap(err, "не удалось выполнить запрос на получение статистики")
 	}
 	defer rows.Close()
 
@@ -49,7 +49,7 @@ func (s *PGstorage) GetStatsByUserIDs(ctx context.Context, ids []uint64, date ti
 			&stat.CurrentCarbs,
 			&stat.Date,
 		); err != nil {
-			return nil, errors.Wrap(err, "failed to scan !stats! row")
+			return nil, errors.Wrap(err, "не удалось прочитать строку статистики")
 		}
 		stats = append(stats, &stat)
 	}

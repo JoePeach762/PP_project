@@ -17,7 +17,7 @@ import (
 const consumerGroupID = "user-service-consumer"
 
 func (c *Consumer) Consume(ctx context.Context) {
-	slog.Info("Starting Kafka consumer", "topic", c.topic, "group_id", consumerGroupID)
+	slog.Info("Запуск консьюмера Kafka", "topic", c.topic, "group_id", consumerGroupID)
 
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:           c.kafka,
@@ -31,7 +31,7 @@ func (c *Consumer) Consume(ctx context.Context) {
 	})
 	defer func() {
 		if err := r.Close(); err != nil {
-			slog.Error("Failed to close Kafka reader", "error", err)
+			slog.Error("Не удалось закрыть ридер Kafka", "error", err)
 		}
 	}()
 
@@ -39,11 +39,11 @@ func (c *Consumer) Consume(ctx context.Context) {
 		msg, err := r.FetchMessage(ctx)
 		if err != nil {
 			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
-				slog.Info("Kafka consumer stopped")
+				slog.Info("Консьюмер Kafka остановлен")
 				return
 			}
 
-			slog.Error("Failed to fetch Kafka message", "error", err)
+			slog.Error("Не удалось получить сообщение из Kafka", "error", err)
 
 			time.Sleep(time.Second)
 			continue
@@ -51,13 +51,13 @@ func (c *Consumer) Consume(ctx context.Context) {
 
 		var event models.MealInfo
 		if err := json.Unmarshal(msg.Value, &event); err != nil {
-			slog.Error("Failed to parse Kafka message",
+			slog.Error("Не удалось разобрать сообщение Kafka",
 				"error", err,
 				"message_offset", msg.Offset,
 				"message_partition", msg.Partition)
 
 			if err := commitMessage(ctx, r, msg); err != nil {
-				slog.Error("Failed to commit invalid Kafka message",
+				slog.Error("Не удалось закоммитить некорректное сообщение Kafka",
 					"error", err,
 					"message_offset", msg.Offset,
 					"message_partition", msg.Partition)
@@ -66,12 +66,12 @@ func (c *Consumer) Consume(ctx context.Context) {
 		}
 
 		if event.UserId == 0 {
-			slog.Warn("Received meal event with missing UserID",
+			slog.Warn("Получено событие о приеме пищи без UserID",
 				"message_offset", msg.Offset,
 				"meal_name", event.Name)
 
 			if err := commitMessage(ctx, r, msg); err != nil {
-				slog.Error("Failed to commit Kafka message with missing UserID",
+				slog.Error("Не удалось закоммитить сообщение Kafka без UserID",
 					"error", err,
 					"message_offset", msg.Offset,
 					"message_partition", msg.Partition)
@@ -85,7 +85,7 @@ func (c *Consumer) Consume(ctx context.Context) {
 
 		if err := c.processor.AddMealToUser(ctx, &event); err != nil {
 			if isNonRetryableProcessingError(err) {
-				slog.Warn("Skipping non-retryable meal event",
+				slog.Warn("Пропуск события о приеме пищи с неповторяемой ошибкой",
 					"error", err,
 					"user_id", event.UserId,
 					"meal_name", event.Name,
@@ -93,7 +93,7 @@ func (c *Consumer) Consume(ctx context.Context) {
 					"message_partition", msg.Partition)
 
 				if err := commitMessage(ctx, r, msg); err != nil {
-					slog.Error("Failed to commit non-retryable Kafka message",
+					slog.Error("Не удалось закоммитить сообщение Kafka с неповторяемой ошибкой",
 						"error", err,
 						"message_offset", msg.Offset,
 						"message_partition", msg.Partition)
@@ -101,7 +101,7 @@ func (c *Consumer) Consume(ctx context.Context) {
 				continue
 			}
 
-			slog.Error("Failed to process meal event",
+			slog.Error("Не удалось обработать событие о приеме пищи",
 				"error", err,
 				"user_id", event.UserId,
 				"meal_name", event.Name,
@@ -110,7 +110,7 @@ func (c *Consumer) Consume(ctx context.Context) {
 		}
 
 		if err := commitMessage(ctx, r, msg); err != nil {
-			slog.Error("Failed to commit processed Kafka message",
+			slog.Error("Не удалось закоммитить обработанное сообщение Kafka",
 				"error", err,
 				"user_id", event.UserId,
 				"meal_name", event.Name,
@@ -119,7 +119,7 @@ func (c *Consumer) Consume(ctx context.Context) {
 			continue
 		}
 
-		slog.Debug("Successfully processed meal event",
+		slog.Debug("Событие о приеме пищи успешно обработано",
 			"user_id", event.UserId,
 			"meal_name", event.Name,
 			"calories", event.Calories100g*event.WeightGrams/100)

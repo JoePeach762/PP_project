@@ -17,12 +17,12 @@ func (s *PGstorage) FetchPendingOutboxEvents(ctx context.Context, limit int) ([]
 
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return nil, errors.Wrap(err, "generate meal outbox SELECT query")
+		return nil, errors.Wrap(err, "не удалось сформировать SELECT-запрос к meal outbox")
 	}
 
 	rows, err := s.db.Query(ctx, queryText, args...)
 	if err != nil {
-		return nil, errors.Wrap(err, "execute meal outbox SELECT query")
+		return nil, errors.Wrap(err, "не удалось выполнить SELECT-запрос к meal outbox")
 	}
 	defer rows.Close()
 
@@ -30,7 +30,7 @@ func (s *PGstorage) FetchPendingOutboxEvents(ctx context.Context, limit int) ([]
 	for rows.Next() {
 		var event OutboxEvent
 		if err := rows.Scan(&event.ID, &event.Payload); err != nil {
-			return nil, errors.Wrap(err, "scan meal outbox row")
+			return nil, errors.Wrap(err, "не удалось прочитать строку meal outbox")
 		}
 		events = append(events, event)
 	}
@@ -47,11 +47,11 @@ func (s *PGstorage) MarkOutboxEventPublished(ctx context.Context, id uint64) err
 
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate meal outbox UPDATE query")
+		return errors.Wrap(err, "не удалось сформировать UPDATE-запрос к meal outbox")
 	}
 
 	if _, err := s.db.Exec(ctx, queryText, args...); err != nil {
-		return errors.Wrap(err, "execute meal outbox UPDATE query")
+		return errors.Wrap(err, "не удалось выполнить UPDATE-запрос к meal outbox")
 	}
 
 	return nil

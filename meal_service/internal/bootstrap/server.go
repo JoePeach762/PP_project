@@ -56,11 +56,11 @@ func (s *Server) AppRun(
 	var runErr error
 	select {
 	case <-ctx.Done():
-		slog.Info("Shutting down...")
+		slog.Info("Завершение работы...")
 	case err := <-errCh:
 		if err != nil && !errors.Is(err, http.ErrServerClosed) {
 			runErr = err
-			slog.Error("Server runtime failed", "error", err)
+			slog.Error("Ошибка выполнения сервера", "error", err)
 		}
 		cancel()
 	}
@@ -70,7 +70,7 @@ func (s *Server) AppRun(
 
 	if s.httpServer != nil {
 		if err := s.httpServer.Shutdown(shutdownCtx); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			return fmt.Errorf("shutdown gateway server: %w", err)
+			return fmt.Errorf("ошибка остановки gateway-сервера: %w", err)
 		}
 	}
 	if s.grpcServer != nil {
@@ -78,7 +78,7 @@ func (s *Server) AppRun(
 	}
 
 	if runErr != nil {
-		return fmt.Errorf("server run failed: %w", runErr)
+		return fmt.Errorf("ошибка запуска сервера: %w", runErr)
 	}
 
 	return nil
@@ -87,13 +87,13 @@ func (s *Server) AppRun(
 func (s *Server) runGRPCServer(addr string, mealGRPC *meal.GRPCServer) error {
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
-		return fmt.Errorf("failed to listen: %w", err)
+		return fmt.Errorf("не удалось начать прослушивание: %w", err)
 	}
 
 	s.grpcServer = grpc.NewServer()
 	meals_api.RegisterMealServiceServer(s.grpcServer, mealGRPC)
 
-	slog.Info("gRPC server listening", "addr", addr)
+	slog.Info("gRPC-сервер запущен", "addr", addr)
 	return s.grpcServer.Serve(lis)
 }
 
@@ -114,7 +114,7 @@ func (s *Server) runGatewayServer(ctx context.Context, httpAddr string, mealGRPC
 
 	mux := runtime.NewServeMux()
 	if err := meals_api.RegisterMealServiceHandlerServer(ctx, mux, mealGRPC); err != nil {
-		return fmt.Errorf("failed to register meal service: %w", err)
+		return fmt.Errorf("не удалось зарегистрировать сервис приемов пищи: %w", err)
 	}
 
 	r.Mount("/", mux)
@@ -129,6 +129,6 @@ func (s *Server) runGatewayServer(ctx context.Context, httpAddr string, mealGRPC
 		Handler: r,
 	}
 
-	slog.Info("HTTP/gRPC-Gateway server listening", "addr", httpAddr)
+	slog.Info("HTTP/gRPC-Gateway сервер запущен", "addr", httpAddr)
 	return s.httpServer.ListenAndServe()
 }

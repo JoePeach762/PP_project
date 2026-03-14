@@ -19,16 +19,16 @@ func main() {
 	}
 	cfg, err := config.LoadConfig(configPath)
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		log.Fatalf("Не удалось загрузить конфигурацию: %v", err)
 	}
 	userStorage, statsStorage, err := bootstrap.InitPGStorage(cfg)
 	if err != nil {
-		log.Fatalf("Failed to load pgstorage: %v", err)
+		log.Fatalf("Не удалось инициализировать pgstorage: %v", err)
 	}
 	kafkaProducer := bootstrap.InitKafkaProducer(cfg)
 	defer func() {
 		if err := kafkaProducer.Close(); err != nil {
-			log.Printf("Failed to close user Kafka producer: %v", err)
+			log.Printf("Не удалось закрыть Kafka producer сервиса пользователей: %v", err)
 		}
 	}()
 	userService := bootstrap.InitUserService(userStorage, statsStorage, cfg)
@@ -43,6 +43,6 @@ func main() {
 	go outboxPublisher.Run(ctx)
 
 	if err := server.AppRun(ctx, userGRPC, userConsumer, cfg.HTTPPort, cfg.GRPCPort); err != nil {
-		log.Fatalf("user server failed: %v", err)
+		log.Fatalf("Сервер пользователей завершился с ошибкой: %v", err)
 	}
 }

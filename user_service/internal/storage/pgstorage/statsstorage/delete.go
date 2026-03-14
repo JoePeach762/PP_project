@@ -18,12 +18,12 @@ func (s *PGstorage) DeleteByUserIDs(ctx context.Context, ids []uint64) error {
 
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate delete !stats! query")
+		return errors.Wrap(err, "не удалось сформировать запрос на удаление статистики")
 	}
 
 	_, err = s.db.Exec(ctx, queryText, args...)
 	if err != nil {
-		return errors.Wrap(err, "execute delete !stats! query")
+		return errors.Wrap(err, "не удалось выполнить запрос на удаление статистики")
 	}
 
 	return nil

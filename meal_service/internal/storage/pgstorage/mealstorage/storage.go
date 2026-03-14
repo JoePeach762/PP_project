@@ -60,7 +60,7 @@ func (s *PGstorage) initTables() error {
 
 	_, err := s.db.Exec(context.Background(), mealSQL)
 	if err != nil {
-		return errors.Wrap(err, "init meal_info table")
+		return errors.Wrap(err, "не удалось инициализировать таблицу приемов пищи")
 	}
 
 	indexSQL := fmt.Sprintf(`
@@ -73,7 +73,7 @@ func (s *PGstorage) initTables() error {
 
 	_, err = s.db.Exec(context.Background(), indexSQL)
 	if err != nil {
-		return errors.Wrap(err, "create meal_info index")
+		return errors.Wrap(err, "не удалось создать индекс таблицы приемов пищи")
 	}
 
 	outboxSQL := fmt.Sprintf(`
@@ -91,7 +91,7 @@ func (s *PGstorage) initTables() error {
 
 	_, err = s.db.Exec(context.Background(), outboxSQL)
 	if err != nil {
-		return errors.Wrap(err, "init meal outbox table")
+		return errors.Wrap(err, "не удалось инициализировать таблицу meal outbox")
 	}
 
 	outboxIndexSQL := fmt.Sprintf(`
@@ -105,7 +105,7 @@ func (s *PGstorage) initTables() error {
 
 	_, err = s.db.Exec(context.Background(), outboxIndexSQL)
 	if err != nil {
-		return errors.Wrap(err, "create meal outbox index")
+		return errors.Wrap(err, "не удалось создать индекс для meal outbox")
 	}
 
 	return nil

@@ -12,11 +12,11 @@ func (storage *PGstorage) GetMealsByUserId(ctx context.Context, id uint64) ([]*m
 	query := storage.getMealsQuery(id)
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return nil, errors.Wrap(err, "generate !meals! query error")
+		return nil, errors.Wrap(err, "не удалось сформировать запрос на получение приемов пищи")
 	}
 	rows, err := storage.db.Query(ctx, queryText, args...)
 	if err != nil {
-		return nil, errors.Wrap(err, "quering !meals! error")
+		return nil, errors.Wrap(err, "не удалось выполнить запрос на получение приемов пищи")
 	}
 	defer rows.Close()
 
@@ -34,7 +34,7 @@ func (storage *PGstorage) GetMealsByUserId(ctx context.Context, id uint64) ([]*m
 			&m.Carbs100g,
 			&m.Date,
 		); err != nil {
-			return nil, errors.Wrap(err, "failed to scan !meals! row")
+			return nil, errors.Wrap(err, "не удалось прочитать строку приема пищи")
 		}
 		meals = append(meals, &m)
 	}

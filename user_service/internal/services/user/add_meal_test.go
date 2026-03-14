@@ -14,13 +14,13 @@ func TestServiceAddMealToUser_DelegatesToStatsStorage(t *testing.T) {
 	statsStorage := &mocks.StatsStorage{}
 	service := newServiceForTest(nil, statsStorage)
 	meal := &models.MealInfo{UserId: 42, Name: "Apple", WeightGrams: 150}
-	expectedErr := errors.New("storage error")
+	expectedErr := errors.New("ошибка хранилища")
 
 	statsStorage.EXPECT().AddMealToUser(ctx, meal).Return(expectedErr)
 
 	err := service.AddMealToUser(ctx, meal)
 	if !errors.Is(err, expectedErr) {
-		t.Fatalf("expected error %v, got %v", expectedErr, err)
+		t.Fatalf("ожидалась ошибка %v, получено %v", expectedErr, err)
 	}
 
 	statsStorage.AssertExpectations(t)

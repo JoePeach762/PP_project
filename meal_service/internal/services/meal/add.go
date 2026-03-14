@@ -18,7 +18,7 @@ func (s *Service) Add(ctx context.Context, req *models.MealInput) error {
 
 	template, err := s.cache.GetProduct(ctx, req.Name)
 	if err != nil {
-		return fmt.Errorf("get product from cache: %w", err)
+		return fmt.Errorf("не удалось получить продукт из кэша: %w", err)
 	}
 	if template == nil {
 		template, err = s.offClient.FetchProduct(ctx, req.Name)
@@ -26,13 +26,13 @@ func (s *Service) Add(ctx context.Context, req *models.MealInput) error {
 			return err
 		}
 		if err := s.cache.AddProduct(ctx, template); err != nil {
-			slog.Warn("Failed to cache product", "name", template.Name, "error", err)
+			slog.Warn("Не удалось сохранить продукт в кэш", "name", template.Name, "error", err)
 		}
 	}
 
 	eventID, err := newEventID()
 	if err != nil {
-		return fmt.Errorf("generate meal event id: %w", err)
+		return fmt.Errorf("не удалось сгенерировать event id события о приеме пищи: %w", err)
 	}
 
 	info := &models.MealInfo{

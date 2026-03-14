@@ -19,21 +19,21 @@ func main() {
 	}
 	cfg, err := config.LoadConfig(configPath)
 	if err != nil {
-		log.Fatalf("Failed to load config: %v", err)
+		log.Fatalf("Не удалось загрузить конфигурацию: %v", err)
 	}
 	pgStorage, err := bootstrap.InitPGStorage(cfg)
 	if err != nil {
-		log.Fatalf("Failed to load pgstorage: %v", err)
+		log.Fatalf("Не удалось инициализировать pgstorage: %v", err)
 	}
 	redisCache, err := bootstrap.InitRedisCache(cfg)
 	if err != nil {
-		log.Fatalf("Failed to load rediscache: %v", err)
+		log.Fatalf("Не удалось инициализировать rediscache: %v", err)
 	}
 	offClient := bootstrap.InitOFFClient(cfg)
 	kafkaProducer := bootstrap.InitKafkaProducer(cfg)
 	defer func() {
 		if err := kafkaProducer.Close(); err != nil {
-			log.Printf("Failed to close meal Kafka producer: %v", err)
+			log.Printf("Не удалось закрыть Kafka producer сервиса приемов пищи: %v", err)
 		}
 	}()
 	mealService := bootstrap.InitMealService(pgStorage, redisCache, offClient, cfg)
@@ -48,6 +48,6 @@ func main() {
 	go outboxPublisher.Run(ctx)
 
 	if err := server.AppRun(ctx, mealGRPC, mealConsumer, cfg.HTTPPort, cfg.GRPCPort); err != nil {
-		log.Fatalf("meal server failed: %v", err)
+		log.Fatalf("Сервер приемов пищи завершился с ошибкой: %v", err)
 	}
 }

@@ -59,7 +59,7 @@ func (s *PGstorage) initTables() error {
 
 	_, err := s.db.Exec(context.Background(), statsSQL)
 	if err != nil {
-		return errors.Wrap(err, "init stats table")
+		return errors.Wrap(err, "не удалось инициализировать таблицу статистики")
 	}
 
 	processedMealEventsSQL := fmt.Sprintf(`
@@ -75,7 +75,7 @@ func (s *PGstorage) initTables() error {
 
 	_, err = s.db.Exec(context.Background(), processedMealEventsSQL)
 	if err != nil {
-		return errors.Wrap(err, "init processed meal events table")
+		return errors.Wrap(err, "не удалось инициализировать таблицу обработанных событий приемов пищи")
 	}
 
 	return nil

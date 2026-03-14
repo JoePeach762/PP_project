@@ -47,7 +47,7 @@ func (p *Publisher) Run(ctx context.Context) {
 	for {
 		select {
 		case <-ctx.Done():
-			slog.Info("User outbox publisher stopped")
+			slog.Info("Публикатор user outbox остановлен")
 			return
 		case <-ticker.C:
 			p.publishPending(ctx)
@@ -63,7 +63,7 @@ func (p *Publisher) publishPending(ctx context.Context) {
 
 		events, err := p.storage.FetchPendingOutboxEvents(ctx, p.batchSize)
 		if err != nil {
-			slog.Error("Failed to fetch user outbox events", "error", err)
+			slog.Error("Не удалось получить события из user outbox", "error", err)
 			return
 		}
 		if len(events) == 0 {
@@ -72,12 +72,12 @@ func (p *Publisher) publishPending(ctx context.Context) {
 
 		for _, event := range events {
 			if err := p.producer.PublishMessage(ctx, event.Payload); err != nil {
-				slog.Error("Failed to publish user outbox event", "error", err, "event_id", event.ID)
+				slog.Error("Не удалось опубликовать событие из user outbox", "error", err, "event_id", event.ID)
 				return
 			}
 
 			if err := p.storage.MarkOutboxEventPublished(ctx, event.ID); err != nil {
-				slog.Error("Failed to mark user outbox event as published", "error", err, "event_id", event.ID)
+				slog.Error("Не удалось отметить событие из user outbox как опубликованное", "error", err, "event_id", event.ID)
 				return
 			}
 		}

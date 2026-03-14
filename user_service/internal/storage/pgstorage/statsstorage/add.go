@@ -13,20 +13,20 @@ import (
 
 func (s *PGstorage) AddMealToUser(ctx context.Context, info *models.MealInfo) (err error) {
 	if info.EventID == "" {
-		return errors.New("meal event id is required")
+		return errors.New("требуется event id события о приеме пищи")
 	}
 
 	stats := newStatsFromMeal(info)
 	tx, err := s.db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
-		return errors.Wrap(err, "begin addMeal transaction")
+		return errors.Wrap(err, "не удалось начать транзакцию добавления приема пищи")
 	}
 	defer func() {
 		if err == nil {
 			return
 		}
 		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil && rollbackErr != pgx.ErrTxClosed {
-			err = errors.Wrap(rollbackErr, "rollback addMeal transaction")
+			err = errors.Wrap(rollbackErr, "не удалось откатить транзакцию добавления приема пищи")
 		}
 	}()
 
@@ -38,16 +38,16 @@ func (s *PGstorage) AddMealToUser(ctx context.Context, info *models.MealInfo) (e
 
 	eventQueryText, eventArgs, err := eventQuery.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate processed_meal_events INSERT query")
+		return errors.Wrap(err, "не удалось сформировать INSERT-запрос в processed_meal_events")
 	}
 
 	eventResult, err := tx.Exec(ctx, eventQueryText, eventArgs...)
 	if err != nil {
-		return errors.Wrap(err, "execute processed_meal_events INSERT query")
+		return errors.Wrap(err, "не удалось выполнить INSERT-запрос в processed_meal_events")
 	}
 	if eventResult.RowsAffected() == 0 {
 		if err = tx.Commit(ctx); err != nil {
-			return errors.Wrap(err, "commit duplicate meal event transaction")
+			return errors.Wrap(err, "не удалось зафиксировать транзакцию дубликата события о приеме пищи")
 		}
 		return nil
 	}
@@ -85,16 +85,16 @@ func (s *PGstorage) AddMealToUser(ctx context.Context, info *models.MealInfo) (e
 
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate addMeal INSERT query")
+		return errors.Wrap(err, "не удалось сформировать INSERT-запрос добавления приема пищи")
 	}
 
 	_, err = tx.Exec(ctx, queryText, args...)
 	if err != nil {
-		return errors.Wrap(err, "execute addMeal INSERT query")
+		return errors.Wrap(err, "не удалось выполнить INSERT-запрос добавления приема пищи")
 	}
 
 	if err = tx.Commit(ctx); err != nil {
-		return errors.Wrap(err, "commit addMeal transaction")
+		return errors.Wrap(err, "не удалось зафиксировать транзакцию добавления приема пищи")
 	}
 
 	return nil

@@ -66,7 +66,7 @@ func (s *PGstorage) initTables() error {
 
 	_, err := s.db.Exec(context.Background(), userSQL)
 	if err != nil {
-		return errors.Wrap(err, "init users table")
+		return errors.Wrap(err, "не удалось инициализировать таблицу пользователей")
 	}
 
 	outboxSQL := fmt.Sprintf(`
@@ -84,7 +84,7 @@ func (s *PGstorage) initTables() error {
 
 	_, err = s.db.Exec(context.Background(), outboxSQL)
 	if err != nil {
-		return errors.Wrap(err, "init user outbox table")
+		return errors.Wrap(err, "не удалось инициализировать таблицу user outbox")
 	}
 
 	outboxIndexSQL := fmt.Sprintf(`
@@ -97,7 +97,7 @@ func (s *PGstorage) initTables() error {
 
 	_, err = s.db.Exec(context.Background(), outboxIndexSQL)
 	if err != nil {
-		return errors.Wrap(err, "create user outbox index")
+		return errors.Wrap(err, "не удалось создать индекс для user outbox")
 	}
 
 	return nil

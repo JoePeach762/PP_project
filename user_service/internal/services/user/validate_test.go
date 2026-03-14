@@ -13,11 +13,11 @@ func TestServiceValidateSingle_NormalizesSex(t *testing.T) {
 	input.Sex = " FEMALE "
 
 	if err := service.validateSingle(input); err != nil {
-		t.Fatalf("validateSingle returned error: %v", err)
+		t.Fatalf("validateSingle вернул ошибку: %v", err)
 	}
 
 	if input.Sex != "female" {
-		t.Fatalf("expected normalized sex to be female, got %q", input.Sex)
+		t.Fatalf("ожидалось, что пол будет нормализован в female, получено %q", input.Sex)
 	}
 }
 
@@ -87,11 +87,11 @@ func TestServiceValidateSingle_InvalidFields(t *testing.T) {
 
 			err := service.validateSingle(input)
 			if err == nil {
-				t.Fatalf("expected error")
+				t.Fatalf("ожидалась ошибка")
 			}
 
 			if !strings.Contains(err.Error(), tt.wantErr) {
-				t.Fatalf("expected error to contain %q, got %q", tt.wantErr, err.Error())
+				t.Fatalf("ожидалось, что ошибка будет содержать %q, получено %q", tt.wantErr, err.Error())
 			}
 		})
 	}
@@ -106,14 +106,14 @@ func TestServiceValidate_ValidatesBatch(t *testing.T) {
 	second.Sex = " MALE "
 
 	if err := service.Validate([]*models.UserInput{first, second}); err != nil {
-		t.Fatalf("Validate returned error: %v", err)
+		t.Fatalf("Validate вернул ошибку: %v", err)
 	}
 
 	if first.Sex != "female" {
-		t.Fatalf("expected first user sex to be normalized, got %q", first.Sex)
+		t.Fatalf("ожидалось, что пол первого пользователя будет нормализован, получено %q", first.Sex)
 	}
 
 	if second.Sex != "male" {
-		t.Fatalf("expected second user sex to be normalized, got %q", second.Sex)
+		t.Fatalf("ожидалось, что пол второго пользователя будет нормализован, получено %q", second.Sex)
 	}
 }

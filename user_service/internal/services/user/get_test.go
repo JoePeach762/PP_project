@@ -15,11 +15,11 @@ func TestServiceGetByIds_EmptyInput(t *testing.T) {
 
 	users, err := service.GetByIds(context.Background(), nil)
 	if err != nil {
-		t.Fatalf("GetByIds returned error: %v", err)
+		t.Fatalf("GetByIds вернул ошибку: %v", err)
 	}
 
 	if len(users) != 0 {
-		t.Fatalf("expected empty result, got %d users", len(users))
+		t.Fatalf("ожидался пустой результат, получено пользователей: %d", len(users))
 	}
 }
 
@@ -27,13 +27,13 @@ func TestServiceGetByIds_ReturnsUserStorageError(t *testing.T) {
 	ctx := context.Background()
 	userStorage := &mocks.UserStorage{}
 	service := newServiceForTest(userStorage, &mocks.StatsStorage{})
-	expectedErr := errors.New("get users failed")
+	expectedErr := errors.New("ошибка получения пользователей")
 
 	userStorage.EXPECT().GetUsersByIds(ctx, []uint64{1, 2}).Return(nil, expectedErr)
 
 	_, err := service.GetByIds(ctx, []uint64{1, 2})
 	if !errors.Is(err, expectedErr) {
-		t.Fatalf("expected error %v, got %v", expectedErr, err)
+		t.Fatalf("ожидалась ошибка %v, получено %v", expectedErr, err)
 	}
 }
 
@@ -42,14 +42,14 @@ func TestServiceGetByIds_ReturnsStatsStorageError(t *testing.T) {
 	userStorage := &mocks.UserStorage{}
 	statsStorage := &mocks.StatsStorage{}
 	service := newServiceForTest(userStorage, statsStorage)
-	expectedErr := errors.New("get stats failed")
+	expectedErr := errors.New("ошибка получения статистики")
 
 	userStorage.EXPECT().GetUsersByIds(ctx, []uint64{1}).Return([]*models.UserInfo{{ID: 1, Name: "Alice"}}, nil)
 	statsStorage.EXPECT().GetStatsByUserIDs(ctx, []uint64{1}, mock.Anything).Return(nil, expectedErr)
 
 	_, err := service.GetByIds(ctx, []uint64{1})
 	if !errors.Is(err, expectedErr) {
-		t.Fatalf("expected error %v, got %v", expectedErr, err)
+		t.Fatalf("ожидалась ошибка %v, получено %v", expectedErr, err)
 	}
 }
 
@@ -70,18 +70,18 @@ func TestServiceGetByIds_MergesUsersAndStats(t *testing.T) {
 
 	users, err := service.GetByIds(ctx, ids)
 	if err != nil {
-		t.Fatalf("GetByIds returned error: %v", err)
+		t.Fatalf("GetByIds вернул ошибку: %v", err)
 	}
 
 	if len(users) != 2 {
-		t.Fatalf("unexpected users count: %d", len(users))
+		t.Fatalf("неожиданное количество пользователей: %d", len(users))
 	}
 
 	if users[0].CurrentCalories != 800 || users[0].CurrentProteins != 70 {
-		t.Fatalf("expected stats to be merged for first user, got %+v", users[0])
+		t.Fatalf("ожидалось объединение статистики для первого пользователя, получено %+v", users[0])
 	}
 
 	if users[1].CurrentCalories != 0 || users[1].CurrentProteins != 0 {
-		t.Fatalf("expected zero stats for second user, got %+v", users[1])
+		t.Fatalf("для второго пользователя ожидалась нулевая статистика, получено %+v", users[1])
 	}
 }

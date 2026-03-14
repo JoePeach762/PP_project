@@ -20,12 +20,12 @@ func (s *PGstorage) DeleteUsers(ctx context.Context, ids []uint64) error {
 
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate delete !users! query")
+		return errors.Wrap(err, "не удалось сформировать запрос на удаление пользователей")
 	}
 
 	_, err = s.db.Exec(ctx, queryText, args...)
 	if err != nil {
-		return errors.Wrap(err, "execute delete !users! query")
+		return errors.Wrap(err, "не удалось выполнить запрос на удаление пользователей")
 	}
 
 	return nil
@@ -38,19 +38,19 @@ func (s *PGstorage) DeleteUsersAndEnqueueEvent(ctx context.Context, ids []uint64
 
 	payload, err := json.Marshal(ids)
 	if err != nil {
-		return errors.Wrap(err, "marshal deleted users event")
+		return errors.Wrap(err, "не удалось сериализовать событие удаления пользователей")
 	}
 
 	tx, err := s.db.BeginTx(ctx, pgx.TxOptions{})
 	if err != nil {
-		return errors.Wrap(err, "begin delete users transaction")
+		return errors.Wrap(err, "не удалось начать транзакцию удаления пользователей")
 	}
 	defer func() {
 		if err == nil {
 			return
 		}
 		if rollbackErr := tx.Rollback(ctx); rollbackErr != nil && rollbackErr != pgx.ErrTxClosed {
-			err = errors.Wrap(rollbackErr, "rollback delete users transaction")
+			err = errors.Wrap(rollbackErr, "не удалось откатить транзакцию удаления пользователей")
 		}
 	}()
 
@@ -60,10 +60,10 @@ func (s *PGstorage) DeleteUsersAndEnqueueEvent(ctx context.Context, ids []uint64
 
 	deleteQueryText, deleteArgs, err := deleteQuery.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate delete users query")
+		return errors.Wrap(err, "не удалось сформировать запрос на удаление пользователей")
 	}
 	if _, err = tx.Exec(ctx, deleteQueryText, deleteArgs...); err != nil {
-		return errors.Wrap(err, "execute delete users query")
+		return errors.Wrap(err, "не удалось выполнить запрос на удаление пользователей")
 	}
 
 	outboxQuery := squirrel.Insert(outboxTableName).
@@ -73,14 +73,14 @@ func (s *PGstorage) DeleteUsersAndEnqueueEvent(ctx context.Context, ids []uint64
 
 	outboxQueryText, outboxArgs, err := outboxQuery.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate user outbox query")
+		return errors.Wrap(err, "не удалось сформировать запрос в user outbox")
 	}
 	if _, err = tx.Exec(ctx, outboxQueryText, outboxArgs...); err != nil {
-		return errors.Wrap(err, "execute user outbox query")
+		return errors.Wrap(err, "не удалось выполнить запрос в user outbox")
 	}
 
 	if err = tx.Commit(ctx); err != nil {
-		return errors.Wrap(err, "commit delete users transaction")
+		return errors.Wrap(err, "не удалось зафиксировать транзакцию удаления пользователей")
 	}
 
 	return nil

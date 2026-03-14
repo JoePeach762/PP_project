@@ -59,7 +59,7 @@ func (c *HTTPClient) FetchProduct(ctx context.Context, name string) (*models.Mea
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("OFF returned: %d", resp.StatusCode)
+		return nil, fmt.Errorf("OpenFoodFacts вернул статус: %d", resp.StatusCode)
 	}
 
 	var result offutils.OFFSearchResponse

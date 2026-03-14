@@ -26,16 +26,16 @@ func (s *PGstorage) UpdateUser(ctx context.Context, id uint64, info models.UserI
 
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate UPDATE query")
+		return errors.Wrap(err, "не удалось сформировать запрос на обновление пользователя")
 	}
 
 	result, err := s.db.Exec(ctx, queryText, args...)
 	if err != nil {
-		return errors.Wrap(err, "execute UPDATE query")
+		return errors.Wrap(err, "не удалось выполнить запрос на обновление пользователя")
 	}
 
 	if result.RowsAffected() == 0 {
-		return errors.New("user not found")
+		return errors.New("пользователь не найден")
 	}
 
 	return nil

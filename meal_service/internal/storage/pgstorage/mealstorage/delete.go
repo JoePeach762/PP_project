@@ -17,12 +17,12 @@ func (s *PGstorage) DeleteByUserIds(ctx context.Context, ids []uint64) error {
 
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate delete !meals! query")
+		return errors.Wrap(err, "не удалось сформировать запрос на удаление приемов пищи")
 	}
 
 	_, err = s.db.Exec(ctx, queryText, args...)
 	if err != nil {
-		return errors.Wrap(err, "execute delete !meals! query")
+		return errors.Wrap(err, "не удалось выполнить запрос на удаление приемов пищи")
 	}
 
 	return nil

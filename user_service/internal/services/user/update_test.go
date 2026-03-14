@@ -20,25 +20,25 @@ func TestServiceUpdate_SavesCalculatedUser(t *testing.T) {
 		UpdateUser(ctx, uint64(7), mock.Anything).
 		Run(func(_ context.Context, id uint64, info models.UserInfo) {
 			if id != 7 {
-				t.Fatalf("unexpected id: %d", id)
+				t.Fatalf("неожиданный id: %d", id)
 			}
 
 			if info.Name != input.Name || info.Email != input.Email {
-				t.Fatalf("unexpected user info: %+v", info)
+				t.Fatalf("неожиданные данные пользователя: %+v", info)
 			}
 
 			if info.Sex != "female" {
-				t.Fatalf("expected normalized sex, got %q", info.Sex)
+				t.Fatalf("ожидался нормализованный пол, получено %q", info.Sex)
 			}
 
 			if info.TargetCalories != 1329 || info.TargetProteins != 110 || info.TargetFats != 41 || info.TargetCarbs != 131 {
-				t.Fatalf("unexpected targets: %+v", info)
+				t.Fatalf("неожиданные целевые значения: %+v", info)
 			}
 		}).
 		Return(nil)
 
 	if err := service.Update(ctx, 7, input); err != nil {
-		t.Fatalf("Update returned error: %v", err)
+		t.Fatalf("Update вернул ошибку: %v", err)
 	}
 
 	userStorage.AssertExpectations(t)
@@ -51,11 +51,11 @@ func TestServiceUpdate_ReturnsValidationError(t *testing.T) {
 
 	err := service.Update(context.Background(), 1, input)
 	if err == nil {
-		t.Fatalf("expected validation error")
+		t.Fatalf("ожидалась ошибка валидации")
 	}
 
 	if !strings.Contains(err.Error(), "некорректный email") {
-		t.Fatalf("unexpected error: %v", err)
+		t.Fatalf("неожиданная ошибка: %v", err)
 	}
 }
 
@@ -72,10 +72,10 @@ func TestServiceUpdate_WrapsCalculationError(t *testing.T) {
 		TargetWeightKg: 0,
 	})
 	if err == nil {
-		t.Fatalf("expected calculation error")
+		t.Fatalf("ожидалась ошибка расчета")
 	}
 
 	if !strings.Contains(err.Error(), "не удалось пересчитать цели") {
-		t.Fatalf("unexpected error: %v", err)
+		t.Fatalf("неожиданная ошибка: %v", err)
 	}
 }

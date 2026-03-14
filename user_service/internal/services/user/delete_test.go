@@ -13,13 +13,13 @@ func TestServiceDeleteByIds_DelegatesToStorage(t *testing.T) {
 	userStorage := &mocks.UserStorage{}
 	service := newServiceForTest(userStorage, nil)
 	ids := []uint64{1, 2, 3}
-	expectedErr := errors.New("delete failed")
+	expectedErr := errors.New("ошибка удаления")
 
 	userStorage.EXPECT().DeleteUsersAndEnqueueEvent(ctx, ids).Return(expectedErr)
 
 	err := service.DeleteByIds(ctx, ids)
 	if !errors.Is(err, expectedErr) {
-		t.Fatalf("expected error %v, got %v", expectedErr, err)
+		t.Fatalf("ожидалась ошибка %v, получено %v", expectedErr, err)
 	}
 
 	userStorage.AssertExpectations(t)

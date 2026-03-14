@@ -13,11 +13,11 @@ func (storage *PGstorage) AddUsers(ctx context.Context, infos []*models.UserInfo
 	query := storage.addUsersQuery(infos)
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return errors.Wrap(err, "generate !users! query error")
+		return errors.Wrap(err, "не удалось сформировать запрос на добавление пользователей")
 	}
 	_, err = storage.db.Exec(ctx, queryText, args...)
 	if err != nil {
-		err = errors.Wrap(err, "exeс !users! query error")
+		err = errors.Wrap(err, "не удалось выполнить запрос на добавление пользователей")
 	}
 	return err
 }

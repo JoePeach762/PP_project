@@ -12,11 +12,11 @@ func (storage *PGstorage) GetUsersByIds(ctx context.Context, ids []uint64) ([]*m
 	query := storage.getUsersQuery(ids)
 	queryText, args, err := query.ToSql()
 	if err != nil {
-		return nil, errors.Wrap(err, "generate !users! query error")
+		return nil, errors.Wrap(err, "не удалось сформировать запрос на получение пользователей")
 	}
 	rows, err := storage.db.Query(ctx, queryText, args...)
 	if err != nil {
-		return nil, errors.Wrap(err, "quering !users! error")
+		return nil, errors.Wrap(err, "не удалось выполнить запрос на получение пользователей")
 	}
 	defer rows.Close()
 
@@ -37,7 +37,7 @@ func (storage *PGstorage) GetUsersByIds(ctx context.Context, ids []uint64) ([]*m
 			&u.TargetFats,
 			&u.TargetCarbs,
 		); err != nil {
-			return nil, errors.Wrap(err, "failed to scan !users! row")
+			return nil, errors.Wrap(err, "не удалось прочитать строку пользователя")
 		}
 		users = append(users, &u)
 	}

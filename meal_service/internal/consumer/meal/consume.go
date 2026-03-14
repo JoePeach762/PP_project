@@ -13,7 +13,7 @@ import (
 const consumerGroupID = "meal-service-consumer"
 
 func (c *Consumer) Consume(ctx context.Context) {
-	slog.Info("Starting Kafka consumer",
+	slog.Info("Запуск консьюмера Kafka",
 		"topic", c.topic,
 		"group_id", consumerGroupID,
 	)
@@ -30,7 +30,7 @@ func (c *Consumer) Consume(ctx context.Context) {
 	})
 	defer func() {
 		if err := r.Close(); err != nil {
-			slog.Error("Failed to close Kafka reader", "error", err)
+			slog.Error("Не удалось закрыть ридер Kafka", "error", err)
 		}
 	}()
 
@@ -38,25 +38,25 @@ func (c *Consumer) Consume(ctx context.Context) {
 		msg, err := r.FetchMessage(ctx)
 		if err != nil {
 			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) {
-				slog.Info("Kafka consumer stopped")
+				slog.Info("Консьюмер Kafka остановлен")
 				return
 			}
 
-			slog.Error("Failed to fetch Kafka message", "error", err)
+			slog.Error("Не удалось получить сообщение из Kafka", "error", err)
 			time.Sleep(time.Second)
 			continue
 		}
 
 		var ids []uint64
 		if err := json.Unmarshal(msg.Value, &ids); err != nil {
-			slog.Error("Invalid Kafka payload",
+			slog.Error("Некорректный payload Kafka",
 				"error", err,
 				"offset", msg.Offset,
 				"partition", msg.Partition,
 			)
 
 			if err := commitMessage(ctx, r, msg); err != nil {
-				slog.Error("Failed to commit invalid Kafka message",
+				slog.Error("Не удалось закоммитить некорректное сообщение Kafka",
 					"error", err,
 					"offset", msg.Offset,
 					"partition", msg.Partition,
@@ -66,7 +66,7 @@ func (c *Consumer) Consume(ctx context.Context) {
 		}
 
 		if err := c.processor.CascadeDeletion(ctx, ids); err != nil {
-			slog.Error("Processing failed",
+			slog.Error("Ошибка обработки сообщения",
 				"error", err,
 				"offset", msg.Offset,
 			)
@@ -74,7 +74,7 @@ func (c *Consumer) Consume(ctx context.Context) {
 		}
 
 		if err := commitMessage(ctx, r, msg); err != nil {
-			slog.Error("Commit failed",
+			slog.Error("Ошибка коммита сообщения",
 				"error", err,
 				"offset", msg.Offset,
 				"partition", msg.Partition,
@@ -82,7 +82,7 @@ func (c *Consumer) Consume(ctx context.Context) {
 			continue
 		}
 
-		slog.Debug("User meals deleted", "ids", ids)
+		slog.Debug("Приемы пищи пользователей удалены", "ids", ids)
 	}
 }
 

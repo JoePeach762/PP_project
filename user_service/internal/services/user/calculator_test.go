@@ -18,23 +18,23 @@ func TestServiceCalculateTargetsSingle_SetsTargets(t *testing.T) {
 	}
 
 	if err := service.calculateTargetsSingle(info); err != nil {
-		t.Fatalf("calculateTargetsSingle returned error: %v", err)
+		t.Fatalf("calculateTargetsSingle вернул ошибку: %v", err)
 	}
 
 	if info.TargetCalories != 2129 {
-		t.Fatalf("unexpected TargetCalories: %d", info.TargetCalories)
+		t.Fatalf("неожиданный TargetCalories: %d", info.TargetCalories)
 	}
 
 	if info.TargetProteins != 130 {
-		t.Fatalf("unexpected TargetProteins: %d", info.TargetProteins)
+		t.Fatalf("неожиданный TargetProteins: %d", info.TargetProteins)
 	}
 
 	if info.TargetFats != 65 {
-		t.Fatalf("unexpected TargetFats: %d", info.TargetFats)
+		t.Fatalf("неожиданный TargetFats: %d", info.TargetFats)
 	}
 
 	if info.TargetCarbs != 256 {
-		t.Fatalf("unexpected TargetCarbs: %d", info.TargetCarbs)
+		t.Fatalf("неожиданный TargetCarbs: %d", info.TargetCarbs)
 	}
 }
 
@@ -49,11 +49,11 @@ func TestServiceCalculateTargetsSingle_AppliesMinimumCalories(t *testing.T) {
 	}
 
 	if err := service.calculateTargetsSingle(info); err != nil {
-		t.Fatalf("calculateTargetsSingle returned error: %v", err)
+		t.Fatalf("calculateTargetsSingle вернул ошибку: %v", err)
 	}
 
 	if info.TargetCalories != 1200 {
-		t.Fatalf("expected minimum calories floor, got %d", info.TargetCalories)
+		t.Fatalf("ожидался минимальный порог калорий, получено %d", info.TargetCalories)
 	}
 }
 
@@ -65,10 +65,10 @@ func TestServiceCalculateTargets_ReturnsError(t *testing.T) {
 		{Sex: "male", Age: 0, HeightCm: 180, WeightKg: 80, TargetWeightKg: 75},
 	})
 	if err == nil {
-		t.Fatalf("expected error")
+		t.Fatalf("ожидалась ошибка")
 	}
 
 	if !strings.Contains(err.Error(), "недостаточно данных") {
-		t.Fatalf("unexpected error: %v", err)
+		t.Fatalf("неожиданная ошибка: %v", err)
 	}
 }

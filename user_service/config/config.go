@@ -62,14 +62,14 @@ func LoadConfig(configPath string) (*Config, error) {
 
 	if err := viper.ReadInConfig(); err != nil {
 		if _, ok := err.(viper.ConfigFileNotFoundError); ok {
-			return nil, fmt.Errorf("config file not found: %s", configPath)
+			return nil, fmt.Errorf("файл конфигурации не найден: %s", configPath)
 		}
-		return nil, fmt.Errorf("error reading config: %w", err)
+		return nil, fmt.Errorf("ошибка чтения конфигурации: %w", err)
 	}
 
 	var cfg Config
 	if err := viper.Unmarshal(&cfg); err != nil {
-		return nil, fmt.Errorf("unable to decode config: %w", err)
+		return nil, fmt.Errorf("не удалось декодировать конфигурацию: %w", err)
 	}
 
 	return &cfg, nil
